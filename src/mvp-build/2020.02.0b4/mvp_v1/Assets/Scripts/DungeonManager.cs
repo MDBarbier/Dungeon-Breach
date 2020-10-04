@@ -11,6 +11,9 @@ public class DungeonManager : MonoBehaviour
     private GameObject[][] furniturePositions = new GameObject[zlength][];
     private Dictionary<GameObject, Character> characterList;
     private Dictionary<(int, int), GameObject> gridPositions;
+    private bool hasInitialisedGrid;
+    private bool hasInitialisedFurniture;
+    private bool hasInitialisedCharacters;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
     [SerializeField] GameObject dungetonTile;
@@ -28,46 +31,7 @@ public class DungeonManager : MonoBehaviour
     {
         gridPositions = new Dictionary<(int, int), GameObject>();
         characterList = new Dictionary<GameObject, Character>();
-        gridGenerator = GameObject.FindObjectOfType<GridGenerator>();
-        InitializeJaggedArray(xlength, zlength);
-        AddFurniture();
-
-        if (gridGenerator == null)
-        {
-            Debug.LogError("DungeonManager fatal error: Could not locate the grid generator");
-            return;
-        }
-
-        //Generate grid and assign output to grid positions
-        gridPositions = gridGenerator.RenderGrid(zlength, xlength, dungetonTile);
-
-        //Assign materials to grid tiles
-        gridGenerator.ApplyMaterials(dungeonTileColour1, dungeonTileColour2, xlength, zlength, gridPositions);
-
-        //Instantiate demo characters
-        var boromir = InstantiateCharacter("Boromir", 10, 8, 20, 10, 25, 14, true, new Vector3(1f, 0.75f, 0f), blueTeamCharacterColour);
-        characterList.Add(boromir.Item2, boromir.Item1);
-        var gimli = InstantiateCharacter("Gimli", 8, 20, 12, 18, 50, 10, true, new Vector3(2f, 0.75f, 0f), blueTeamCharacterColour);
-        characterList.Add(gimli.Item2, gimli.Item1);
-        var aragorn = InstantiateCharacter("Aragorn", 8, 20, 12, 18, 50, 10, true, new Vector3(3f, 0.75f, 0f), blueTeamCharacterColour);
-        characterList.Add(aragorn.Item2, aragorn.Item1);
-
-        var orc1 = InstantiateCharacter("Orc1", 8, 20, 12, 18, 50, 10, false, new Vector3(0f, 0.75f, 4f), redTeamCharacterColour);
-        characterList.Add(orc1.Item2, orc1.Item1);
-        var orc2 = InstantiateCharacter("Orc2", 8, 20, 12, 18, 50, 10, false, new Vector3(1f, 0.75f, 4f), redTeamCharacterColour);
-        characterList.Add(orc2.Item2, orc2.Item1);
-        var orc3 = InstantiateCharacter("Orc3", 8, 20, 12, 18, 50, 10, false, new Vector3(2f, 0.75f, 4f), redTeamCharacterColour);
-        characterList.Add(orc3.Item2, orc3.Item1);
-        var orc4 = InstantiateCharacter("Orc4", 8, 20, 12, 18, 50, 10, false, new Vector3(3f, 0.75f, 4f), redTeamCharacterColour);
-        characterList.Add(orc4.Item2, orc4.Item1);
-        var orc5 = InstantiateCharacter("Orc5", 8, 20, 12, 18, 50, 10, false, new Vector3(4f, 0.75f, 4f), redTeamCharacterColour);
-        characterList.Add(orc5.Item2, orc5.Item1);
-
-        //Print the location of all characters to the log
-        foreach (var characterInPlay in characterList)
-        {
-            print($"{characterInPlay.Value.Name} is in square X: {characterInPlay.Key.transform.position.x}, Z: {characterInPlay.Key.transform.position.z}");
-        }
+        gridGenerator = GameObject.FindObjectOfType<GridGenerator>();        
     }
 
     private (Character, GameObject) InstantiateCharacter(string name, int cha, int str, int dex, int con, int hp, int intelligence, bool playercontrolled, Vector3 coordinatesToCreateAt, Material material)
@@ -83,7 +47,62 @@ public class DungeonManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (!hasInitialisedGrid)
+        {
+            hasInitialisedGrid = true;
+
+            if (gridGenerator == null)
+            {
+                Debug.LogError("DungeonManager fatal error: Could not locate the grid generator");
+                return;
+            }
+
+            //Generate grid and assign output to grid positions
+            gridPositions = gridGenerator.RenderGrid(zlength, xlength, dungetonTile);
+
+            //Assign materials to grid tiles
+            gridGenerator.ApplyMaterials(dungeonTileColour1, dungeonTileColour2, xlength, zlength, gridPositions);
+
+        }
+
+        if (!hasInitialisedFurniture)
+        {
+            hasInitialisedFurniture = true;
+
+            InitializeJaggedArray(xlength, zlength); //todo, parameterise jagged array itself
+            AddFurniture(); 
+        }
+
+
+        if (!hasInitialisedCharacters)
+        {
+            hasInitialisedCharacters = true;
+
+            //Instantiate demo characters
+            var boromir = InstantiateCharacter("Boromir", 10, 8, 20, 10, 25, 14, true, new Vector3(1f, 0.75f, 0f), blueTeamCharacterColour);
+            characterList.Add(boromir.Item2, boromir.Item1);
+            var gimli = InstantiateCharacter("Gimli", 8, 20, 12, 18, 50, 10, true, new Vector3(2f, 0.75f, 0f), blueTeamCharacterColour);
+            characterList.Add(gimli.Item2, gimli.Item1);
+            var aragorn = InstantiateCharacter("Aragorn", 8, 20, 12, 18, 50, 10, true, new Vector3(3f, 0.75f, 0f), blueTeamCharacterColour);
+            characterList.Add(aragorn.Item2, aragorn.Item1);
+
+            var orc1 = InstantiateCharacter("Orc1", 8, 20, 12, 18, 50, 10, false, new Vector3(0f, 0.75f, 4f), redTeamCharacterColour);
+            characterList.Add(orc1.Item2, orc1.Item1);
+            var orc2 = InstantiateCharacter("Orc2", 8, 20, 12, 18, 50, 10, false, new Vector3(1f, 0.75f, 4f), redTeamCharacterColour);
+            characterList.Add(orc2.Item2, orc2.Item1);
+            var orc3 = InstantiateCharacter("Orc3", 8, 20, 12, 18, 50, 10, false, new Vector3(2f, 0.75f, 4f), redTeamCharacterColour);
+            characterList.Add(orc3.Item2, orc3.Item1);
+            var orc4 = InstantiateCharacter("Orc4", 8, 20, 12, 18, 50, 10, false, new Vector3(3f, 0.75f, 4f), redTeamCharacterColour);
+            characterList.Add(orc4.Item2, orc4.Item1);
+            var orc5 = InstantiateCharacter("Orc5", 8, 20, 12, 18, 50, 10, false, new Vector3(4f, 0.75f, 4f), redTeamCharacterColour);
+            characterList.Add(orc5.Item2, orc5.Item1);
+
+            //Print the location of all characters to the log
+            foreach (var characterInPlay in characterList)
+            {
+                print($"{characterInPlay.Value.Name} is in square X: {characterInPlay.Key.transform.position.x}, Z: {characterInPlay.Key.transform.position.z}");
+            } 
+        }
     }
 
     //MVP only
