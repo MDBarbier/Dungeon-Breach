@@ -1,5 +1,4 @@
-using System;
-using System.Collections;
+using Assets.Scripts;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,6 +13,7 @@ public class DungeonManager : MonoBehaviour
     private bool hasInitialisedGrid;
     private bool hasInitialisedFurniture;
     private bool hasInitialisedCharacters;
+    private DiceRoller diceRoller;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
     [SerializeField] GameObject dungetonTile;
@@ -31,7 +31,8 @@ public class DungeonManager : MonoBehaviour
     {
         gridPositions = new Dictionary<(int, int), GameObject>();
         characterList = new Dictionary<GameObject, Character>();
-        gridGenerator = GameObject.FindObjectOfType<GridGenerator>();        
+        gridGenerator = GameObject.FindObjectOfType<GridGenerator>();
+        diceRoller = new DiceRoller();
     }
 
     private (Character, GameObject) InstantiateCharacter(string name, int cha, int str, int dex, int con, int hp, int intelligence, bool playercontrolled, Vector3 coordinatesToCreateAt, Material material)
@@ -46,6 +47,15 @@ public class DungeonManager : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {
+        InitialiseGrid();
+
+        InitialiseFurniture();
+
+        InitialiseCharacters();
+    }
+
+    private void InitialiseGrid()
     {
         if (!hasInitialisedGrid)
         {
@@ -64,16 +74,21 @@ public class DungeonManager : MonoBehaviour
             gridGenerator.ApplyMaterials(dungeonTileColour1, dungeonTileColour2, xlength, zlength, gridPositions);
 
         }
+    }
 
+    private void InitialiseFurniture()
+    {
         if (!hasInitialisedFurniture)
         {
             hasInitialisedFurniture = true;
 
             InitializeJaggedArray(xlength, zlength); //todo, parameterise jagged array itself
-            AddFurniture(); 
+            AddFurniture();
         }
+    }
 
-
+    private void InitialiseCharacters()
+    {
         if (!hasInitialisedCharacters)
         {
             hasInitialisedCharacters = true;
@@ -101,7 +116,7 @@ public class DungeonManager : MonoBehaviour
             foreach (var characterInPlay in characterList)
             {
                 print($"{characterInPlay.Value.Name} is in square X: {characterInPlay.Key.transform.position.x}, Z: {characterInPlay.Key.transform.position.z}");
-            } 
+            }
         }
     }
 
