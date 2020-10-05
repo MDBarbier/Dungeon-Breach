@@ -13,5 +13,6 @@ namespace Assets.Scripts.Classes
         public bool PlayerControlled { get; set; }
         public string Backstory { get; set; }
         public string Level { get; set; }
+        public int MA { get; set; }
     }
 }

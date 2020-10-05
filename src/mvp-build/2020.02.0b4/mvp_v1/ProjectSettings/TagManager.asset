@@ -7,6 +7,7 @@ TagManager:
   - Floor
   - Character
   - Scenery
+  - AdminObject
   layers:
   - Default
   - TransparentFX

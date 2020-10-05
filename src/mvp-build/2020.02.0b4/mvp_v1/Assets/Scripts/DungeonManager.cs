@@ -1,6 +1,7 @@
 using Assets.Scripts.Classes;
 using Assets.Scripts.Nonmonobehaviour;
 using Assets.Scripts.NonMonoBehaviour;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -124,6 +125,15 @@ public class DungeonManager : MonoBehaviour
             print(JaggedArrayMethods.GetJaggedArrayOutputString(furniturePositions)); 
         }
     }       
-   
+
+    internal Dictionary<(int, int), GameObject> GetDungeonGrid()
+    {
+        return gridPositions;
+    }
+
+    internal GameObject[][] GetFurnitureArray()
+    {
+        return furniturePositions;
+    }
 
 }
