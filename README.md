@@ -12,4 +12,5 @@ This is a turn based strategy game built in Unity engine in 3d. The theme is bas
 
 # Changelog
 
-- v0.1: created repo and added readme
+- v0.1: created repo and added readme (03/10/2020)
+- v0.2: first feature set for mvp (05/10/2020)
