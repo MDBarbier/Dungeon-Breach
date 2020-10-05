@@ -27,6 +27,7 @@ public class DungeonManager : MonoBehaviour
     [SerializeField] Material redTeamCharacterColour;
     [SerializeField] GameObject dungeonFurniture;
     [SerializeField] Material dungeonFurnitureMaterial;
+    [SerializeField] bool debugLogging = false;
 #pragma warning restore 649
 
     // Start is called before the first frame update
@@ -98,7 +99,10 @@ public class DungeonManager : MonoBehaviour
             characterManager.InstantiateCharacter("Orc5", 8, 20, 12, 18, 50, 10, false, new Vector3(4f, 0.75f, 4f), redTeamCharacterColour, characterPiece);
 
             //Print the location of all characters to the log
-            characterManager.PrintCharacters();
+            if (debugLogging)
+            {
+                characterManager.PrintCharacters(); 
+            }
         }
     }
         
@@ -115,7 +119,10 @@ public class DungeonManager : MonoBehaviour
         furniturePositions[4][2] = Instantiate(dungeonFurniture, new Vector3(4, 0.65f, 2), Quaternion.identity);
 
         //log the jagged array to console
-        print(JaggedArrayMethods.GetJaggedArrayOutputString(furniturePositions));
+        if (debugLogging)
+        {
+            print(JaggedArrayMethods.GetJaggedArrayOutputString(furniturePositions)); 
+        }
     }       
    
 

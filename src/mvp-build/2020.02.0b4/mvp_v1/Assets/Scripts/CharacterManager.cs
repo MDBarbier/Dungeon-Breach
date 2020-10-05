@@ -24,7 +24,7 @@ public class CharacterManager : MonoBehaviour
     {
         var character = new Character() { Name = name, CHA = cha, CON = con, DEX = dex, HP = hp, INT = intelligence, PlayerControlled = playercontrolled, STR = str };                
         var charGo = Instantiate(characterPiece, coordinatesToCreateAt, Quaternion.identity);
-        charGo.name = name;
+        charGo.name = name;        
         var mesh = charGo.GetComponent<MeshRenderer>();
         mesh.material = material;
 

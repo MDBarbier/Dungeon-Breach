@@ -31,7 +31,7 @@ public class GridGenerator : MonoBehaviour
             for (int z = 0; z < zlength; z++)
             {
                 var tempGameObject = Instantiate(templateGameObject, new Vector3(x, 0.2f, z), Quaternion.identity);
-                tempGameObject.name = $"Square ({x},{z})";
+                tempGameObject.name = $"Floor ({x},{z})";
                 squares.Add((x, z), tempGameObject);
             }
         }
