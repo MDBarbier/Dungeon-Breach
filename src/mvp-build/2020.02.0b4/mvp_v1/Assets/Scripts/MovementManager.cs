@@ -13,6 +13,7 @@ public class MovementManager : MonoBehaviour
     private SelectionManager selectionManager;
     private Dictionary<(int, int), (GameObject, Material)> highlightedTiles;
     private GameObject lastSelectedGameObject;
+    private TurnManager turnManager;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
     [SerializeField] Material dungetonTileSelected;    
@@ -25,6 +26,7 @@ public class MovementManager : MonoBehaviour
         dungeonManager = FindObjectOfType<DungeonManager>();
         characterManager = FindObjectOfType<CharacterManager>();
         selectionManager = FindObjectOfType<SelectionManager>();
+        turnManager = FindObjectOfType<TurnManager>();
     }
 
     // Update is called once per frame
@@ -85,6 +87,9 @@ public class MovementManager : MonoBehaviour
 
         //Report the change back to the character controller
         characterManager.UpdateCharacterPosition(theCharacter);
+
+        //Tell turn controller to change the turn
+        turnManager.ToggleTurn();
     }
 
     private Dictionary<(int, int), GameObject> GetMoves(ValueTuple<GameObject, Character> theCharacter)

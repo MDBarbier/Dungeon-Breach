@@ -8,6 +8,7 @@ public class SelectionManager : MonoBehaviour
     private GameObject lastSelected;
     private GameObject selectionRing;
     private MovementManager movementManager;
+    private TurnManager turnManager;
 
     public (GameObject, Character) selectedCharacter;
 
@@ -20,7 +21,8 @@ public class SelectionManager : MonoBehaviour
     {
         movementManager = FindObjectOfType<MovementManager>();
         characterManager = FindObjectOfType<CharacterManager>();
-        controlManager = FindObjectOfType<ControlManager>();    
+        controlManager = FindObjectOfType<ControlManager>();
+        turnManager = FindObjectOfType<TurnManager>();
     }
 
     // Update is called once per frame
@@ -35,7 +37,7 @@ public class SelectionManager : MonoBehaviour
         {
             case "Character":     
                 
-                if (lastSelected == controlManager.clickDetectedOn)
+                if (lastSelected == controlManager.clickDetectedOn || !turnManager.IsItPlayerTurn())
                 {
                     break;
                 }

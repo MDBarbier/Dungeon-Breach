@@ -18,6 +18,7 @@ public class DungeonManager : MonoBehaviour
     private bool hasInitialisedCharacters;
     private DiceRoller diceRoller;
     private CharacterManager characterManager;
+    private TurnManager turnManager;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
     [SerializeField] GameObject dungetonTile;
@@ -34,6 +35,7 @@ public class DungeonManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        turnManager = FindObjectOfType<TurnManager>();
         gridPositions = new Dictionary<(int, int), GameObject>();
         characterList = new Dictionary<GameObject, Character>();
         gridGenerator = FindObjectOfType<GridGenerator>();
@@ -48,7 +50,7 @@ public class DungeonManager : MonoBehaviour
 
         InitialiseFurniture();
 
-        InitialiseCharacters();
+        InitialiseCharacters();        
     }
 
     private void InitialiseGrid()
@@ -98,6 +100,8 @@ public class DungeonManager : MonoBehaviour
             characterManager.InstantiateCharacter("Orc3", 8, 20, 12, 18, 50, 10, false, new Vector3(2f, 0.75f, 4f), redTeamCharacterColour, characterPiece);
             characterManager.InstantiateCharacter("Orc4", 8, 20, 12, 18, 50, 10, false, new Vector3(3f, 0.75f, 4f), redTeamCharacterColour, characterPiece);
             characterManager.InstantiateCharacter("Orc5", 8, 20, 12, 18, 50, 10, false, new Vector3(4f, 0.75f, 4f), redTeamCharacterColour, characterPiece);
+
+            turnManager.SetInitiative(characterManager.GetAllCharacters());
 
             //Print the location of all characters to the log
             if (debugLogging)

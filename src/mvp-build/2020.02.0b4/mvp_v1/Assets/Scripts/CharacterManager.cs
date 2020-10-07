@@ -144,4 +144,21 @@ public class CharacterManager : MonoBehaviour
         }
 
     }
+
+    internal List<Character> GetAllCharacters()
+    {
+        List<Character> characters = new List<Character>();
+
+        foreach (var character in playerCharacterList)
+        {
+            characters.Add(character.Value);
+        }
+
+        foreach (var character in enemyList)
+        {
+            characters.Add(character.Value);
+        }
+
+        return characters;
+    }
 }
