@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 
 public class CharacterManager : MonoBehaviour
 {
@@ -40,7 +41,7 @@ public class CharacterManager : MonoBehaviour
         {
             return (goMatch.Key, goMatch.Value);
         }
-        else 
+        else
         {
             return (null, null);
         }
@@ -60,9 +61,18 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    internal (Character, GameObject) InstantiateCharacter(string name, int cha, int str, int dex, int con, int hp, int intelligence, bool playercontrolled, Vector3 coordinatesToCreateAt, Material material, GameObject characterPiece)
+    internal (Character, GameObject) InstantiateCharacter(string name, int cha, int str, int dex, int con, int hp, int intelligence, int ac, bool playercontrolled, Vector3 coordinatesToCreateAt, Material material, GameObject characterPiece)
     {
-        var character = new Character() { Name = name, CHA = cha, CON = con, DEX = dex, HP = hp, INT = intelligence, PlayerControlled = playercontrolled, STR = str };
+        //check the name is not in use
+        var matchP = GetCharacterByName(name);
+        var matchE = GetCharacterByName(name);
+
+        if (!string.IsNullOrWhiteSpace(matchP.Name) || !string.IsNullOrWhiteSpace(matchE.Name))
+        {
+            throw new Exception("Cannot add a character with existing name: " + name);
+        }
+
+        var character = new Character() { Name = name, CHA = cha, CON = con, DEX = dex, HP = hp, INT = intelligence, AC = ac, PlayerControlled = playercontrolled, STR = str };
         var charGo = Instantiate(characterPiece, coordinatesToCreateAt, Quaternion.identity);
         charGo.name = name;
         var mesh = charGo.GetComponent<MeshRenderer>();
@@ -160,5 +170,56 @@ public class CharacterManager : MonoBehaviour
         }
 
         return characters;
+    }
+
+    internal Character GetCharacterByName(string name)
+    {
+        var matchP = playerCharacterList.Where(a => a.Value.Name == name).FirstOrDefault();
+        var matchE = enemyList.Where(a => a.Value.Name == name).FirstOrDefault();
+
+        if (matchP.Value != null)
+        {
+            if (!string.IsNullOrWhiteSpace(matchP.Value.Name))
+            {
+                return matchP.Value;
+            }
+        }
+
+        if (matchE.Value != null)
+        {
+            if (!string.IsNullOrWhiteSpace(matchE.Value.Name))
+            {
+                return matchE.Value;
+            }
+        }
+
+        //If we get here there is no match so return empty character
+        return new Character();
+
+    }    
+
+    internal GameObject GetCharacterGameObject(Character character)
+    {
+        var matchP = playerCharacterList.Where(a => a.Value.Name == character.Name).FirstOrDefault();
+        var matchE = enemyList.Where(a => a.Value.Name == character.Name).FirstOrDefault();
+
+        if (matchP.Value != null)
+        {
+            if (!string.IsNullOrWhiteSpace(matchP.Value.Name))
+            {
+                return matchP.Key;
+            }
+        }
+
+        if (matchE.Value != null)
+        {
+            if (!string.IsNullOrWhiteSpace(matchE.Value.Name))
+            {
+                return matchE.Key;
+            }
+        }
+
+        //If we get here there is no match so return empty character
+        return new GameObject();
     }
 }

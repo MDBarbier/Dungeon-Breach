@@ -10,6 +10,7 @@ namespace Assets.Scripts.Classes
         public int DEX { get; set; }
         public int CHA { get; set; }
         public int HP { get; set; }
+        public int AC { get; set; }
         public bool PlayerControlled { get; set; }
         public string Backstory { get; set; }
         public string Level { get; set; }

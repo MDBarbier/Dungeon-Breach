@@ -88,11 +88,14 @@ public class MovementManager : MonoBehaviour
         //Report the change back to the character controller
         characterManager.UpdateCharacterPosition(theCharacter);
 
-        //Tell turn controller to change the turn
-        turnManager.ToggleTurn();
+        //Tell turn controller to update initiative for this character
+        turnManager.UpdateInitiativeTracker(theCharacter.Item2);
+
+        //Remove selections
+        selectionManager.RemoveSelections();
     }
 
-    private Dictionary<(int, int), GameObject> GetMoves(ValueTuple<GameObject, Character> theCharacter)
+    internal Dictionary<(int, int), GameObject> GetMoves(ValueTuple<GameObject, Character> theCharacter)
     {
         int movementAllowance = theCharacter.Item2.MA;
         var currentX = theCharacter.Item1.transform.position.x;

@@ -28,35 +28,39 @@ public class SelectionManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        AddSelectionIfPlayerCharacterNext();
+
+        //If no click detected end here
         if (controlManager.clickDetectedOn == null)
-        { 
+        {
             return;
         }
 
+        //Handle any click events
         switch (controlManager.clickDetectedOn.tag)
         {
-            case "Character":     
-                
-                if (lastSelected == controlManager.clickDetectedOn || !turnManager.IsItPlayerTurn())
-                {
-                    break;
-                }
+            case "Character":
 
-                var localSelectedCharacter = characterManager.GetPlayerCharacter(controlManager.clickDetectedOn.name);
+                //if (lastSelected == controlManager.clickDetectedOn || !turnManager.IsItPlayerTurn())
+                //{
+                //    break;
+                //}
 
-                if (localSelectedCharacter.Item2 == null || localSelectedCharacter.Item1 == null || !localSelectedCharacter.Item2.PlayerControlled)
-                {
-                    break;
-                }
+                //var localSelectedCharacter = characterManager.GetPlayerCharacter(controlManager.clickDetectedOn.name);
 
-                RemoveSelections();
+                //if (localSelectedCharacter.Item2 == null || localSelectedCharacter.Item1 == null || !localSelectedCharacter.Item2.PlayerControlled)
+                //{
+                //    break;
+                //}
 
-                selectionRing = Instantiate(selectionIndicator, new Vector3(controlManager.clickDetectedOn.transform.position.x, 0.35f, 
-                    controlManager.clickDetectedOn.transform.position.z), Quaternion.identity);
+                //RemoveSelections();
 
-                lastSelected = controlManager.clickDetectedOn;
+                //selectionRing = Instantiate(selectionIndicator, new Vector3(controlManager.clickDetectedOn.transform.position.x, 0.35f, 
+                //    controlManager.clickDetectedOn.transform.position.z), Quaternion.identity);
 
-                selectedCharacter = (controlManager.clickDetectedOn, localSelectedCharacter.Item2);
+                //lastSelected = controlManager.clickDetectedOn;
+
+                //selectedCharacter = (controlManager.clickDetectedOn, localSelectedCharacter.Item2);
 
                 break;
 
@@ -72,26 +76,51 @@ public class SelectionManager : MonoBehaviour
                     }
                 }
 
-                RemoveSelections();
+                
                 break;
 
             case "Scenery":
                 
-                RemoveSelections();
                 break;
 
             case "AdminObject":
-                                
+
                 break;
 
             case null:
-            default:
-                RemoveSelections();
+            default:                
                 break;
         }
     }
 
-    private void RemoveSelections()
+    private void AddSelectionIfPlayerCharacterNext()
+    {
+        var nextCharacterToAct = turnManager.GetCharacterWhoActsNext();
+        var charGameObject = characterManager.GetCharacterGameObject(nextCharacterToAct);
+
+        if (charGameObject == null)
+        {
+            return;
+        }
+
+        if (nextCharacterToAct.PlayerControlled)
+        {
+            //If the game object is the same as the one selected already then return
+            if (lastSelected == charGameObject)
+            {
+                return;
+            }
+
+            selectionRing = Instantiate(selectionIndicator, new Vector3(charGameObject.transform.position.x, 0.35f,
+                charGameObject.transform.position.z), Quaternion.identity);
+
+            lastSelected = charGameObject;
+
+            selectedCharacter = (charGameObject, nextCharacterToAct);
+        }
+    }
+
+    internal void RemoveSelections()
     {
         if (selectionRing != null)
         {
