@@ -51,15 +51,15 @@ public class AI : MonoBehaviour
                 }
 
                 //Get available attacks
-                //var attacks = combatManager.GetTargetsForAttack(characterToAct, charGo);
-                //var attack = attacks.FirstOrDefault();
-                //if (attack.Value != null)
-                //{
-                //    var resultOfAttack = combatManager.AttackCharacter(characterToAct, characterManager.GetCharacterByName(attack.Value.name));
-                //    print($"{characterToAct.Name} attacks {attack.Value.name} and the attack is {resultOfAttack.Item1} for {resultOfAttack.Item2} damage!");
-                //}
-                //else 
-                //{
+                var attacks = combatManager.GetTargetsForAttack(characterToAct, charGo);
+                var attack = attacks.FirstOrDefault();
+                if (attack.Value != null)
+                {
+                    var resultOfAttack = combatManager.AttackCharacter(characterToAct, characterManager.GetCharacterByName(attack.Value.name));
+                    print($"{characterToAct.Name} attacks {attack.Value.name} and the attack is {resultOfAttack.Item1} for {resultOfAttack.Item2} damage!");
+                }
+                else 
+                {
                     //Get available moves
                     var moves = movementManager.GetMoves((charGo, characterToAct));
 
@@ -69,7 +69,7 @@ public class AI : MonoBehaviour
                     {
                         movementManager.MoveCharacter((charGo, characterToAct), ((move.Key.Item1, move.Key.Item2), move.Value));
                     }
-                //}               
+                }               
 
                 //Update initiative
                 turnManager.UpdateInitiativeTracker(characterToAct);

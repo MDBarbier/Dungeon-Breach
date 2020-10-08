@@ -200,6 +200,11 @@ public class CharacterManager : MonoBehaviour
 
     internal GameObject GetCharacterGameObject(Character character)
     {
+        if (character == null)
+        {
+            throw new Exception("Null character sent to GetCharacterGameObject");
+        }
+
         var matchP = playerCharacterList.Where(a => a.Value.Name == character.Name).FirstOrDefault();
         var matchE = enemyList.Where(a => a.Value.Name == character.Name).FirstOrDefault();
 

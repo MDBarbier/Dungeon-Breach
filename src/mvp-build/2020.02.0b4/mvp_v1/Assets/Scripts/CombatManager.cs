@@ -51,88 +51,60 @@ public class CombatManager : MonoBehaviour
         Dictionary<(int, int), GameObject> possibleAttacks = new Dictionary<(int, int), GameObject>();
 
         //via dungeon manager find the game objects for the 4 squares around the current square (if they exist)
-        var upperSquare = dungeonGrid.Where(a => a.Key == (currentX + 1, currentZ)).FirstOrDefault();
-        var lowerSquare = dungeonGrid.Where(a => a.Key == (currentX - 1, currentZ)).FirstOrDefault();
-        var leftSquare = dungeonGrid.Where(a => a.Key == (currentX, currentZ + 1)).FirstOrDefault();
-        var rightSquare = dungeonGrid.Where(a => a.Key == (currentX, currentZ - 1)).FirstOrDefault();
-        var upperLeftSquare = dungeonGrid.Where(a => a.Key == (currentX + 1, currentZ +1)).FirstOrDefault();
-        var upperRightSquare = dungeonGrid.Where(a => a.Key == (currentX + 1, currentZ - 1)).FirstOrDefault();
-        var lowerLeftSquare = dungeonGrid.Where(a => a.Key == (currentX - 1, currentZ + 1)).FirstOrDefault();
-        var lowerRightSquare = dungeonGrid.Where(a => a.Key == (currentX - 1, currentZ - 1)).FirstOrDefault();
+        List<KeyValuePair<(int, int), GameObject>> listToCheck = new List<KeyValuePair<(int, int), GameObject>>();
+        
+        
 
-        var result = CheckSquareForPossibleAttack(possibleAttacks, upperSquare);
+        listToCheck.Add(dungeonGrid.Where(a => a.Key == (currentX + 1, currentZ)).FirstOrDefault());
+        listToCheck.Add(dungeonGrid.Where(a => a.Key == (currentX - 1, currentZ)).FirstOrDefault());
+        listToCheck.Add(dungeonGrid.Where(a => a.Key == (currentX, currentZ + 1)).FirstOrDefault());
+        listToCheck.Add(dungeonGrid.Where(a => a.Key == (currentX, currentZ - 1)).FirstOrDefault());
+        listToCheck.Add(dungeonGrid.Where(a => a.Key == (currentX + 1, currentZ +1)).FirstOrDefault());
+        listToCheck.Add(dungeonGrid.Where(a => a.Key == (currentX + 1, currentZ - 1)).FirstOrDefault());
+        listToCheck.Add(dungeonGrid.Where(a => a.Key == (currentX - 1, currentZ + 1)).FirstOrDefault());
+        listToCheck.Add(dungeonGrid.Where(a => a.Key == (currentX - 1, currentZ - 1)).FirstOrDefault());
 
-        if (result.Item2 != null)
+        foreach (var squareToCheck in listToCheck)
         {
-            possibleAttacks.Add((result.Item1.Item1, result.Item1.Item2), result.Item2);
+            if (squareToCheck.Value == null)
+            {
+                continue;
+            }
+
+            var result = CheckSquareForPossibleAttack(squareToCheck);
+
+            if (result)
+            {
+                //Get the character gameobject in the square to attack
+                var characterToAttack = characterManager.GetCharacterAtPosition(squareToCheck.Key.Item1, squareToCheck.Key.Item2);
+                if (characterToAttack.Item2 != null)
+                {                    
+                    //Is the potential target on the same side?
+                    if (characterToAttack.Item2.PlayerControlled != attacker.PlayerControlled)
+                    {
+                        possibleAttacks.Add((squareToCheck.Key.Item1, squareToCheck.Key.Item1), characterToAttack.Item1);
+                    }
+                }                                
+            }
         }
-
-        result = CheckSquareForPossibleAttack(possibleAttacks, lowerSquare);
-
-        if (result.Item2 != null)
-        {
-            possibleAttacks.Add((result.Item1.Item1, result.Item1.Item2), result.Item2);
-        }
-
-        result = CheckSquareForPossibleAttack(possibleAttacks, leftSquare);
-
-        if (result.Item2 != null)
-        {
-            possibleAttacks.Add((result.Item1.Item1, result.Item1.Item2), result.Item2);
-        }
-
-        result = CheckSquareForPossibleAttack(possibleAttacks, rightSquare);
-
-        if (result.Item2 != null)
-        {
-            possibleAttacks.Add((result.Item1.Item1, result.Item1.Item2), result.Item2);
-        }
-
-        result = CheckSquareForPossibleAttack(possibleAttacks, upperRightSquare);
-
-        if (result.Item2 != null)
-        {
-            possibleAttacks.Add((result.Item1.Item1, result.Item1.Item2), result.Item2);
-        }
-
-        result = CheckSquareForPossibleAttack(possibleAttacks, upperLeftSquare);
-
-        if (result.Item2 != null)
-        {
-            possibleAttacks.Add((result.Item1.Item1, result.Item1.Item2), result.Item2);
-        }
-
-        result = CheckSquareForPossibleAttack(possibleAttacks, lowerLeftSquare);
-
-        if (result.Item2 != null)
-        {
-            possibleAttacks.Add((result.Item1.Item1, result.Item1.Item2), result.Item2);
-        }
-
-        result = CheckSquareForPossibleAttack(possibleAttacks, lowerRightSquare);
-
-        if (result.Item2 != null)
-        {
-            possibleAttacks.Add((result.Item1.Item1, result.Item1.Item2), result.Item2);
-        }
-
+        
         return possibleAttacks;
     }
 
-    private ValueTuple<(int, int), GameObject> CheckSquareForPossibleAttack(Dictionary<(int, int), GameObject> possibleMoves, KeyValuePair<(int, int), GameObject> squareToCheck)
+    private bool CheckSquareForPossibleAttack(KeyValuePair<(int, int), GameObject> squareToCheck)
     {
         if (squareToCheck.Value != null)
         {
             //see if the square is occupied: (check character lists, furniture list)
             var characterInPosition = characterManager.GetCharacterAtPosition(squareToCheck.Key.Item1, squareToCheck.Key.Item2);            
 
-            //if not, add them to move list
+            //if not, add them to viable attack list
             if (characterInPosition.Item1 != null)
             {
-                return ((squareToCheck.Key.Item1, squareToCheck.Key.Item2), squareToCheck.Value);
+                return true;
             }
         }
 
-        return ((0, 0), null);
+        return false;
     }
 }
