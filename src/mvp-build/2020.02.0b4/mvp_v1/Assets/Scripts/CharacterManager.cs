@@ -225,6 +225,6 @@ public class CharacterManager : MonoBehaviour
         }
 
         //If we get here there is no match so return empty character
-        return new GameObject();
+        throw new Exception("No character found");
     }
 }

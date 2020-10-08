@@ -38,7 +38,8 @@ public class AI : MonoBehaviour
 
             if (framesBeforeActing <= 0)
             {
-                aiState = AIStates.Acting;                
+                aiState = AIStates.Acting;
+                bool hasMoved = false;
 
                 //Get the character that should be acting
                 var characterToAct = turnManager.GetCharacterWhoActsNext();
@@ -60,16 +61,85 @@ public class AI : MonoBehaviour
                 }
                 else 
                 {
+                    bool increaseXaxis = false;
+                    bool increaseZaxis = false;                    
+
+                    //Select target
+                    try
+                    {
+                        var targetToApproach = combatManager.SelectTarget(characterToAct, charGo);
+                        print($"{characterToAct.Name} is giving {targetToApproach.Item2.name} the evils!");
+
+                        //compare the position of the target to current position
+                        if (targetToApproach.Item1.Item1 > charGo.transform.position.x)
+                        {
+                            increaseXaxis = true;
+                        }
+
+                        if (targetToApproach.Item1.Item2 > charGo.transform.position.z)
+                        {
+                            increaseZaxis = true;
+                        }                       
+
+                    }
+                    catch (Exception ex)
+                    {
+                        print(ex.Message);
+                    }
+
                     //Get available moves
                     var moves = movementManager.GetMoves((charGo, characterToAct));
 
-                    //Take the first move
-                    var move = moves.FirstOrDefault();
-                    if (move.Value != null)
+                    //Use the calculated axis to select a legal move that's in the right direction
+                    foreach (var move in moves)
                     {
-                        movementManager.MoveCharacter((charGo, characterToAct), ((move.Key.Item1, move.Key.Item2), move.Value));
-                    }
-                }               
+                        bool xMatch = false;
+                        bool zMatch = false;
+
+                        if (increaseXaxis)
+                        {
+                            if (move.Key.Item1 >= charGo.transform.position.x)
+                            {
+                                xMatch = true;
+                            } 
+                        }
+                        else
+                        {
+
+                            if (move.Key.Item1 <= charGo.transform.position.x)
+                            {
+                                xMatch = true;
+                            }
+                        }
+
+                        if (increaseZaxis)
+                        {
+                            if (move.Key.Item2 >= charGo.transform.position.z)
+                            {
+                                zMatch = true;
+                            }
+                        }
+                        else
+                        {
+
+                            if (move.Key.Item2 <= charGo.transform.position.z)
+                            {
+                                zMatch = true;
+                            }
+                        }
+
+                        if (zMatch && xMatch)
+                        {
+                            movementManager.MoveCharacter((charGo, characterToAct), ((move.Key.Item1, move.Key.Item2), move.Value));
+                            hasMoved = true;
+                        }
+                    }                    
+                }        
+                
+                if (!hasMoved)
+                {
+                    print($"{characterToAct.Name} bides his time");
+                }
 
                 //Update initiative
                 turnManager.UpdateInitiativeTracker(characterToAct);

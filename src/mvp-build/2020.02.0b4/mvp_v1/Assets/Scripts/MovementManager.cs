@@ -11,12 +11,14 @@ public class MovementManager : MonoBehaviour
     private DungeonManager dungeonManager;
     private CharacterManager characterManager;
     private SelectionManager selectionManager;
+    private CombatManager combatManager;
     private Dictionary<(int, int), (GameObject, Material)> highlightedTiles;
     private GameObject lastSelectedGameObject;
     private TurnManager turnManager;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
-    [SerializeField] Material dungetonTileSelected;    
+    [SerializeField] Material dungetonTileSelected;
+    [SerializeField] Material dungetonTileSelectedAttack;
 #pragma warning restore 649
 
     // Start is called before the first frame update
@@ -27,11 +29,13 @@ public class MovementManager : MonoBehaviour
         characterManager = FindObjectOfType<CharacterManager>();
         selectionManager = FindObjectOfType<SelectionManager>();
         turnManager = FindObjectOfType<TurnManager>();
+        combatManager = FindObjectOfType<CombatManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        //todo :refactor: this update logic into Player character manager
         if (selectionManager.selectedCharacter.Item1 != null)
         {
             if (lastSelectedGameObject == selectionManager.selectedCharacter.Item1)
@@ -48,6 +52,13 @@ public class MovementManager : MonoBehaviour
             ResetHighlightedTiles();
 
             var possibleMoves = GetMoves(selectionManager.selectedCharacter);
+            var possibleAttacks = combatManager.GetTargetsForAttack(selectionManager.selectedCharacter.Item2, selectionManager.selectedCharacter.Item1);
+
+            foreach (var tile in possibleAttacks)
+            {
+                highlightedTiles.Add((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material));
+                tile.Value.GetComponent<MeshRenderer>().material = dungetonTileSelectedAttack;
+            }
 
             foreach (var tile in possibleMoves)
             {
@@ -100,7 +111,7 @@ public class MovementManager : MonoBehaviour
         int movementAllowance = theCharacter.Item2.MA;
         var currentX = theCharacter.Item1.transform.position.x;
         var currentZ = theCharacter.Item1.transform.position.z;
-        var dungeonGrid = dungeonManager.GetDungeonGrid(); //todo refactor into getter on dungeon manager
+        var dungeonGrid = dungeonManager.GetDungeonGrid(); //todo :refactor: into getter on dungeon manager
         var furnitureArray = dungeonManager.GetFurnitureArray();
         Dictionary<(int, int), GameObject> possibleMoves = new Dictionary<(int, int), GameObject>();
 

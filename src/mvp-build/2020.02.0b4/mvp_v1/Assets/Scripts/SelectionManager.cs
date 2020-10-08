@@ -5,6 +5,7 @@ public class SelectionManager : MonoBehaviour
 {
     private ControlManager controlManager;
     private CharacterManager characterManager;
+    private CombatManager combatManager;
     private GameObject lastSelected;
     private GameObject selectionRing;
     private MovementManager movementManager;
@@ -19,6 +20,7 @@ public class SelectionManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        combatManager = FindObjectOfType<CombatManager>();
         movementManager = FindObjectOfType<MovementManager>();
         characterManager = FindObjectOfType<CharacterManager>();
         controlManager = FindObjectOfType<ControlManager>();
@@ -41,26 +43,36 @@ public class SelectionManager : MonoBehaviour
         {
             case "Character":
 
-                //if (lastSelected == controlManager.clickDetectedOn || !turnManager.IsItPlayerTurn())
-                //{
-                //    break;
-                //}
+                //todo :refactor: this logic into character manager
 
-                //var localSelectedCharacter = characterManager.GetPlayerCharacter(controlManager.clickDetectedOn.name);
+                //Is the clicked on character the target of an attack?
+                var targetedCharacters = combatManager.GetTargetedCharacters();
 
-                //if (localSelectedCharacter.Item2 == null || localSelectedCharacter.Item1 == null || !localSelectedCharacter.Item2.PlayerControlled)
-                //{
-                //    break;
-                //}
+                foreach (var c in targetedCharacters)
+                {
+                    if (c.ch.Name == controlManager.clickDetectedOn.name)
+                    {
+                        //Attack!
+                        var result = combatManager.AttackCharacter(c.attacker, c.ch);
+                        if (result.Item1)
+                        {
+                            print($"{c.attacker.Name} strikes {c.ch.Name} with a mighty blow dealing {result.Item2} damage!"); 
+                        }
+                        else
+                        {
+                            print($"{c.attacker.Name} misses {c.ch.Name}");
+                        }
 
-                //RemoveSelections();
+                        combatManager.ClearTargets();
 
-                //selectionRing = Instantiate(selectionIndicator, new Vector3(controlManager.clickDetectedOn.transform.position.x, 0.35f, 
-                //    controlManager.clickDetectedOn.transform.position.z), Quaternion.identity);
+                        //Tell turn controller to update initiative for this character
+                        turnManager.UpdateInitiativeTracker(c.attacker);
 
-                //lastSelected = controlManager.clickDetectedOn;
+                        //todo :BUG:high: things not getting cleaned up properly after an attack... highlighted tiles and selection ring
 
-                //selectedCharacter = (controlManager.clickDetectedOn, localSelectedCharacter.Item2);
+                        break;
+                    }
+                }
 
                 break;
 
@@ -113,7 +125,7 @@ public class SelectionManager : MonoBehaviour
 
             selectionRing = Instantiate(selectionIndicator, new Vector3(charGameObject.transform.position.x, 0.35f,
                 charGameObject.transform.position.z), Quaternion.identity);
-
+            selectionRing.name = "SelectionRing";
             lastSelected = charGameObject;
 
             selectedCharacter = (charGameObject, nextCharacterToAct);

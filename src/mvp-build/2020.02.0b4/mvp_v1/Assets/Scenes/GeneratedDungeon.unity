@@ -553,6 +553,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dungetonTileSelected: {fileID: 2100000, guid: b27ab452fb1bfc047a0717baaa8d50d4, type: 2}
+  dungetonTileSelectedAttack: {fileID: 2100000, guid: 34e82d0592c60e948b359c4eef85aa53, type: 2}
 --- !u!1 &1140544457
 GameObject:
   m_ObjectHideFlags: 0

@@ -30,7 +30,7 @@ public class ControlManager : MonoBehaviour
                     clickDetectedOn = hit.transform.gameObject;
 
                     //Use this to detect hits on nested game objects which are part of a nested prefab for example
-                    //todo make recursive
+                    //todo :refactor: make recursive
                     if (hit.transform.tag == "NestedGameObject")
                     {
                         clickDetectedOn = hit.transform.parent.gameObject;                        
