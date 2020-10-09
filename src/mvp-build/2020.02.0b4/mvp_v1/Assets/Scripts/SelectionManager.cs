@@ -5,6 +5,7 @@ using UnityEngine;
 public class SelectionManager : MonoBehaviour
 {
     private ControlManager controlManager;
+    private CharacterController characterController;
     private CharacterManager characterManager;
     private CombatManager combatManager;
     private GameObject lastSelected;
@@ -27,6 +28,7 @@ public class SelectionManager : MonoBehaviour
         characterManager = FindObjectOfType<CharacterManager>();
         controlManager = FindObjectOfType<ControlManager>();
         turnManager = FindObjectOfType<TurnManager>();
+        characterController = FindObjectOfType<CharacterController>();
         ResetHighlightedTiles();
     }
 
@@ -46,36 +48,8 @@ public class SelectionManager : MonoBehaviour
         {
             case "Character":
 
-                //todo :refactor: this logic into character manager
-
                 //Is the clicked on character the target of an attack?
-                var targetedCharacters = combatManager.GetTargetedCharacters();
-
-                foreach (var c in targetedCharacters)
-                {
-                    if (c.ch.Name == controlManager.clickDetectedOn.name)
-                    {
-                        //Attack!
-                        var result = combatManager.AttackCharacter(c.attacker, c.ch);
-                        if (result.Item1)
-                        {
-                            print($"{c.attacker.Name} strikes {c.ch.Name} with a mighty blow dealing {result.Item2} damage!"); 
-                        }
-                        else
-                        {
-                            print($"{c.attacker.Name} misses {c.ch.Name}");
-                        }
-
-                        combatManager.ClearTargets();
-
-                        //Tell turn controller to update initiative for this character
-                        turnManager.UpdateInitiativeTracker(c.attacker);
-                                                
-                        ResetHighlightedTiles();
-                        RemoveSelections();
-                        break;
-                    }
-                }
+                characterController.HandleCharacterClick(controlManager.clickDetectedOn);
 
                 break;
 
