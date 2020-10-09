@@ -4,6 +4,7 @@ public class ControlManager : MonoBehaviour
 {
     private Camera mainCamera;
     internal GameObject clickDetectedOn;
+    internal bool SpaceBarDetected;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
     [SerializeField] bool debugLogging = false;
@@ -13,6 +14,7 @@ public class ControlManager : MonoBehaviour
     void Start()
     {
         mainCamera = Camera.main;
+        SpaceBarDetected = false;
     }
 
     // Update is called once per frame
@@ -26,15 +28,8 @@ public class ControlManager : MonoBehaviour
             if (Physics.Raycast(ray, out hit, 100f))
             {
                 if (hit.transform)
-                {
+                {                    
                     clickDetectedOn = hit.transform.gameObject;
-
-                    //Use this to detect hits on nested game objects which are part of a nested prefab for example
-                    //todo :refactor: make recursive
-                    if (hit.transform.tag == "NestedGameObject")
-                    {
-                        clickDetectedOn = hit.transform.parent.gameObject;                        
-                    }
                 }
             }
 
@@ -42,6 +37,11 @@ public class ControlManager : MonoBehaviour
             {
                 print($"click detected on {clickDetectedOn.name}");
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            SpaceBarDetected = true;
         }
     }
 }

@@ -46,12 +46,11 @@ public class CombatManager : MonoBehaviour
     }
 
     internal Dictionary<(int,int), GameObject> GetTargetsForAttack(Character attacker, GameObject gameObject)
-    {
-        int range = 1;
+    {        
         ClearTargets();
         var currentX = gameObject.transform.position.x;
         var currentZ = gameObject.transform.position.z;
-        var dungeonGrid = dungeonManager.GetDungeonGrid(); //todo :refactor: into getter on dungeon manager
+        var dungeonGrid = dungeonManager.GetDungeonGrid();
         var furnitureArray = dungeonManager.GetFurnitureArray();
         Dictionary<(int, int), GameObject> possibleAttacks = new Dictionary<(int, int), GameObject>();
 
@@ -111,7 +110,7 @@ public class CombatManager : MonoBehaviour
     {        
         var currentX = gameObject.transform.position.x;
         var currentZ = gameObject.transform.position.z;
-        var dungeonGrid = dungeonManager.GetDungeonGrid(); //todo :refactor: into getter on dungeon manager
+        var dungeonGrid = dungeonManager.GetDungeonGrid();
         var furnitureArray = dungeonManager.GetFurnitureArray();
         Dictionary<(int, int), GameObject> possibleAttacks = new Dictionary<(int, int), GameObject>();
 

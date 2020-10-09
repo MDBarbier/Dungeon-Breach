@@ -11,8 +11,7 @@ public class MovementManager : MonoBehaviour
     private DungeonManager dungeonManager;
     private CharacterManager characterManager;
     private SelectionManager selectionManager;
-    private CombatManager combatManager;
-    private Dictionary<(int, int), (GameObject, Material)> highlightedTiles;
+    private CombatManager combatManager;    
     private GameObject lastSelectedGameObject;
     private TurnManager turnManager;
 
@@ -23,11 +22,10 @@ public class MovementManager : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {
-        ResetHighlightedTiles();
+    {        
         dungeonManager = FindObjectOfType<DungeonManager>();
         characterManager = FindObjectOfType<CharacterManager>();
-        selectionManager = FindObjectOfType<SelectionManager>();
+        selectionManager = FindObjectOfType<SelectionManager>();        
         turnManager = FindObjectOfType<TurnManager>();
         combatManager = FindObjectOfType<CombatManager>();
     }
@@ -44,25 +42,25 @@ public class MovementManager : MonoBehaviour
             }
 
             //return highlighted tiles to their normal state
-            foreach (var tile in highlightedTiles)
+            foreach (var tile in selectionManager.GetHighlightedTiles())
             {
                 tile.Value.Item1.GetComponent<MeshRenderer>().material = tile.Value.Item2;
             }
 
-            ResetHighlightedTiles();
+            selectionManager.ResetHighlightedTiles();
 
             var possibleMoves = GetMoves(selectionManager.selectedCharacter);
             var possibleAttacks = combatManager.GetTargetsForAttack(selectionManager.selectedCharacter.Item2, selectionManager.selectedCharacter.Item1);
 
             foreach (var tile in possibleAttacks)
             {
-                highlightedTiles.Add((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material));
+                selectionManager.AddhighlightedSquare(((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material)));
                 tile.Value.GetComponent<MeshRenderer>().material = dungetonTileSelectedAttack;
             }
 
             foreach (var tile in possibleMoves)
             {
-                highlightedTiles.Add((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material));
+                selectionManager.AddhighlightedSquare(((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material)));
                 tile.Value.GetComponent<MeshRenderer>().material = dungetonTileSelected;
             }
 
@@ -71,24 +69,9 @@ public class MovementManager : MonoBehaviour
         }
         else
         {
-            //return highlighted tiles to their normal state
-            foreach (var tile in highlightedTiles)
-            {
-                tile.Value.Item1.GetComponent<MeshRenderer>().material = tile.Value.Item2;
-            }
-
-            ResetHighlightedTiles();
+            selectionManager.ResetHighlightedTiles();
             lastSelectedGameObject = null;
         }
-    }
-
-    private void ResetHighlightedTiles()
-    {
-        if (highlightedTiles != null)
-        {
-            highlightedTiles.Clear(); 
-        }
-        highlightedTiles = new Dictionary<(int, int), (GameObject, Material)>();
     }
 
     internal void MoveCharacter(ValueTuple<GameObject, Character> theCharacter, ValueTuple<(int, int), GameObject> squareToMoveTo)
@@ -104,6 +87,7 @@ public class MovementManager : MonoBehaviour
 
         //Remove selections
         selectionManager.RemoveSelections();
+        selectionManager.ResetHighlightedTiles();
     }
 
     internal Dictionary<(int, int), GameObject> GetMoves(ValueTuple<GameObject, Character> theCharacter)
@@ -111,7 +95,7 @@ public class MovementManager : MonoBehaviour
         int movementAllowance = theCharacter.Item2.MA;
         var currentX = theCharacter.Item1.transform.position.x;
         var currentZ = theCharacter.Item1.transform.position.z;
-        var dungeonGrid = dungeonManager.GetDungeonGrid(); //todo :refactor: into getter on dungeon manager
+        var dungeonGrid = dungeonManager.GetDungeonGrid();
         var furnitureArray = dungeonManager.GetFurnitureArray();
         Dictionary<(int, int), GameObject> possibleMoves = new Dictionary<(int, int), GameObject>();
 
@@ -169,8 +153,5 @@ public class MovementManager : MonoBehaviour
 
         return ((0, 0), null);
     }
-
-    internal Dictionary<(int, int), (GameObject, Material)> GetHighlightedTiles() => highlightedTiles;
-
 }
 

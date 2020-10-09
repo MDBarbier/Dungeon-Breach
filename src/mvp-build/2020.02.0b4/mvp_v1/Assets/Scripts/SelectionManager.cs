@@ -1,4 +1,5 @@
 using Assets.Scripts.Classes;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SelectionManager : MonoBehaviour
@@ -10,6 +11,7 @@ public class SelectionManager : MonoBehaviour
     private GameObject selectionRing;
     private MovementManager movementManager;
     private TurnManager turnManager;
+    private Dictionary<(int, int), (GameObject, Material)> highlightedTiles;
 
     public (GameObject, Character) selectedCharacter;
 
@@ -19,12 +21,13 @@ public class SelectionManager : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {
+    {        
         combatManager = FindObjectOfType<CombatManager>();
         movementManager = FindObjectOfType<MovementManager>();
         characterManager = FindObjectOfType<CharacterManager>();
         controlManager = FindObjectOfType<ControlManager>();
         turnManager = FindObjectOfType<TurnManager>();
+        ResetHighlightedTiles();
     }
 
     // Update is called once per frame
@@ -67,9 +70,9 @@ public class SelectionManager : MonoBehaviour
 
                         //Tell turn controller to update initiative for this character
                         turnManager.UpdateInitiativeTracker(c.attacker);
-
-                        //todo :BUG:high: things not getting cleaned up properly after an attack... highlighted tiles and selection ring
-
+                                                
+                        ResetHighlightedTiles();
+                        RemoveSelections();
                         break;
                     }
                 }
@@ -79,7 +82,7 @@ public class SelectionManager : MonoBehaviour
             case "Floor":
 
                 //Check whether this tile is in the list of highlighted tiles for the currently selected unit
-                foreach (var tile in movementManager.GetHighlightedTiles())
+                foreach (var tile in GetHighlightedTiles())
                 {
                     if (tile.Key.Item1 == controlManager.clickDetectedOn.transform.position.x && tile.Key.Item2 == controlManager.clickDetectedOn.transform.position.z)
                     {
@@ -107,28 +110,31 @@ public class SelectionManager : MonoBehaviour
 
     private void AddSelectionIfPlayerCharacterNext()
     {
-        var nextCharacterToAct = turnManager.GetCharacterWhoActsNext();
-        var charGameObject = characterManager.GetCharacterGameObject(nextCharacterToAct);
-
-        if (charGameObject == null)
+        if (turnManager != null && characterManager != null)
         {
-            return;
-        }
+            var nextCharacterToAct = turnManager.GetCharacterWhoActsNext();
+            var charGameObject = characterManager.GetCharacterGameObject(nextCharacterToAct);
 
-        if (nextCharacterToAct.PlayerControlled)
-        {
-            //If the game object is the same as the one selected already then return
-            if (lastSelected == charGameObject)
+            if (charGameObject == null)
             {
                 return;
             }
 
-            selectionRing = Instantiate(selectionIndicator, new Vector3(charGameObject.transform.position.x, 0.35f,
-                charGameObject.transform.position.z), Quaternion.identity);
-            selectionRing.name = "SelectionRing";
-            lastSelected = charGameObject;
+            if (nextCharacterToAct.PlayerControlled)
+            {
+                //If the game object is the same as the one selected already then return
+                if (lastSelected == charGameObject)
+                {
+                    return;
+                }
 
-            selectedCharacter = (charGameObject, nextCharacterToAct);
+                selectionRing = Instantiate(selectionIndicator, new Vector3(charGameObject.transform.position.x, 0.35f,
+                    charGameObject.transform.position.z), Quaternion.identity);
+                selectionRing.name = "SelectionRing";
+                lastSelected = charGameObject;
+
+                selectedCharacter = (charGameObject, nextCharacterToAct);
+            }
         }
     }
 
@@ -138,8 +144,39 @@ public class SelectionManager : MonoBehaviour
         {
             Destroy(selectionRing);
         }
-
-        selectedCharacter = (null, null);
+        
         lastSelected = null;
+    }
+
+    internal void ResetHighlightedTiles()
+    {
+        if (highlightedTiles != null)
+        {
+            foreach (var tile in GetHighlightedTiles())
+            {
+                tile.Value.Item1.GetComponent<MeshRenderer>().material = tile.Value.Item2;
+            }
+
+            highlightedTiles.Clear();
+        }        
+
+        highlightedTiles = new Dictionary<(int, int), (GameObject, Material)>();
+    }
+
+    internal Dictionary<(int, int), (GameObject, Material)> GetHighlightedTiles()
+    {
+        if (highlightedTiles == null)
+        {
+            return new Dictionary<(int, int), (GameObject, Material)>();
+        }
+        else
+        {
+            return highlightedTiles;
+        }
+    }
+
+    internal void AddhighlightedSquare(((int, int), (GameObject, Material)) theHighlightedTile)
+    {
+        this.highlightedTiles.Add(theHighlightedTile.Item1, theHighlightedTile.Item2);
     }
 }

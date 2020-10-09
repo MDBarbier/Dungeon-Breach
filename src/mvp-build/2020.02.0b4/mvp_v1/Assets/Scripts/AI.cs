@@ -14,14 +14,12 @@ public class AI : MonoBehaviour
     private int framesBeforeActingOriginalValue;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
-    [SerializeField] int framesBeforeActing = 60;
-    [SerializeField] AIStates aiState;
+    [SerializeField] int framesBeforeActing = 60;    
 #pragma warning restore 649
 
     // Start is called before the first frame update
     void Start()
-    {
-        aiState = AIStates.Waiting;
+    {        
         framesBeforeActingOriginalValue = framesBeforeActing;
         turnManager = FindObjectOfType<TurnManager>();
         movementManager = FindObjectOfType<MovementManager>();
@@ -34,11 +32,8 @@ public class AI : MonoBehaviour
     {
         if (!turnManager.IsItPlayerTurn())
         {
-            aiState = AIStates.Thinking;
-
             if (framesBeforeActing <= 0)
-            {
-                aiState = AIStates.Acting;
+            {                
                 bool hasMoved = false;
 
                 //Get the character that should be acting
@@ -144,8 +139,7 @@ public class AI : MonoBehaviour
                 //Update initiative
                 turnManager.UpdateInitiativeTracker(characterToAct);
 
-                framesBeforeActing = framesBeforeActingOriginalValue;
-                aiState = AIStates.Waiting;
+                framesBeforeActing = framesBeforeActingOriginalValue;                
             }
             else
             {
