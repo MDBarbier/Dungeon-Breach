@@ -40,6 +40,8 @@ public class CombatManager : MonoBehaviour
         if (attackHit)
         {
             damageDealt = attacker.STR + diceRoller.RollDie(6);
+
+            characterManager.ApplyDamage(target, damageDealt);
         }
 
         return (attackHit, damageDealt);

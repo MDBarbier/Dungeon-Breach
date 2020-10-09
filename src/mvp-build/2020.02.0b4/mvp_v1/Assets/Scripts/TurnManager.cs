@@ -116,6 +116,15 @@ public class TurnManager : MonoBehaviour
         return characterManager.GetCharacterByName(nextCharacterToAct);
     }
 
+    internal void RemoveCharacterFromInitiative(Character target)
+    {
+        initiativeTracker.Remove(target);
+        if (nextCharacterToAct == target.Name)
+        {
+            nextCharacterToAct = GetCharacterWhoActsNext().Name;
+        }
+    }
+
     internal bool IsItPlayerTurn() => playersTurn;
 
     internal void ToggleTurn()

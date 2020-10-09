@@ -92,14 +92,14 @@ public class DungeonManager : MonoBehaviour
             hasInitialisedCharacters = true;
 
             //Instantiate demo characters
-            characterManager.InstantiateCharacter("Boromir", 10, 8, 40, 10, 25, 14, 16, true, new Vector3(1f, 0.75f, 0f), blueTeamCharacterColour, characterPiece);
-            characterManager.InstantiateCharacter("Gimli", 8, 20, 12, 18, 50, 10, 16, true, new Vector3(2f, 0.75f, 0f), blueTeamCharacterColour, characterPiece);
-            characterManager.InstantiateCharacter("Aragorn", 8, 20, 12, 18, 50, 10, 16, true, new Vector3(3f, 0.75f, 0f), blueTeamCharacterColour, characterPiece);
-            characterManager.InstantiateCharacter("Orc1", 8, 20, 12, 18, 50, 10, 12, false, new Vector3(0f, 0.75f, 4f), redTeamCharacterColour, characterPiece);
-            characterManager.InstantiateCharacter("Orc2", 8, 20, 12, 18, 50, 10, 12, false, new Vector3(1f, 0.75f, 4f), redTeamCharacterColour, characterPiece);
-            characterManager.InstantiateCharacter("Orc3", 8, 20, 12, 18, 50, 10, 12, false, new Vector3(2f, 0.75f, 4f), redTeamCharacterColour, characterPiece);
-            characterManager.InstantiateCharacter("Orc4", 8, 20, 12, 18, 50, 10, 12, false, new Vector3(3f, 0.75f, 4f), redTeamCharacterColour, characterPiece);
-            characterManager.InstantiateCharacter("Orc5", 8, 20, 12, 18, 50, 10, 12, false, new Vector3(4f, 0.75f, 4f), redTeamCharacterColour, characterPiece);
+            characterManager.InstantiateCharacter("Boromir", 10, 17, 15, 15, 50, 14, 17, true, new Vector3(2f, 0.75f, 0f), blueTeamCharacterColour, characterPiece);
+            characterManager.InstantiateCharacter("Gimli", 8, 20, 12, 18, 64, 10, 19, true, new Vector3(3f, 0.75f, 0f), blueTeamCharacterColour, characterPiece);
+            characterManager.InstantiateCharacter("Aragorn", 16, 16, 16, 17, 55, 15, 18, true, new Vector3(4f, 0.75f, 0f), blueTeamCharacterColour, characterPiece);
+            characterManager.InstantiateCharacter("Orc1", 8, 15, 10, 18, 20, 10, 12, false, new Vector3(0f, 0.75f, 4f), redTeamCharacterColour, characterPiece);
+            characterManager.InstantiateCharacter("Orc2", 8, 15, 10, 18, 20, 10, 12, false, new Vector3(1f, 0.75f, 4f), redTeamCharacterColour, characterPiece);
+            characterManager.InstantiateCharacter("Orc3", 8, 15, 10, 18, 20, 10, 12, false, new Vector3(2f, 0.75f, 4f), redTeamCharacterColour, characterPiece);
+            characterManager.InstantiateCharacter("Orc4", 8, 15, 10, 18, 20, 10, 12, false, new Vector3(3f, 0.75f, 4f), redTeamCharacterColour, characterPiece);
+            characterManager.InstantiateCharacter("Orc5", 8, 15, 10, 18, 20, 10, 12, false, new Vector3(4f, 0.75f, 4f), redTeamCharacterColour, characterPiece);
 
             turnManager.SetInitiative(characterManager.GetAllCharacters());
 

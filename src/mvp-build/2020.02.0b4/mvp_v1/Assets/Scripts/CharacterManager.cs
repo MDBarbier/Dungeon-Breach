@@ -9,10 +9,12 @@ public class CharacterManager : MonoBehaviour
 {
     private Dictionary<GameObject, Character> playerCharacterList;
     private Dictionary<GameObject, Character> enemyList;
+    private TurnManager turnManager;
 
     // Start is called before the first frame update
     void Start()
     {
+        turnManager = FindObjectOfType<TurnManager>();
         enemyList = new Dictionary<GameObject, Character>();
         playerCharacterList = new Dictionary<GameObject, Character>();
     }
@@ -58,6 +60,42 @@ public class CharacterManager : MonoBehaviour
         else
         {
             return (null, null);
+        }
+    }
+
+    internal void ApplyDamage(Character target, int damageDealt)
+    {
+        if (target.PlayerControlled)
+        {
+            var match = playerCharacterList.Where(a => a.Value.Name == target.Name).FirstOrDefault();
+
+            match.Value.HP -= damageDealt;
+
+            if (match.Value.HP <= 0)
+            {
+                print($"{target.Name} is slain!");
+            }
+            else
+            {
+                print($"{target.Name} has {target.HP} hit points left");
+            }
+
+        }
+        else
+        {
+            var match = enemyList.Where(a => a.Value.Name == target.Name).FirstOrDefault();
+
+            match.Value.HP -= damageDealt;
+
+            if (match.Value.HP <= 0)
+            {
+                print($"{target.Name} is slain!");
+                var go = GetCharacterGameObject(target);
+                enemyList.Remove(go);
+                Destroy(go);
+                turnManager.RemoveCharacterFromInitiative(target);
+            }
+
         }
     }
 
