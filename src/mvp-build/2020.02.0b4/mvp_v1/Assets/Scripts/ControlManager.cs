@@ -23,7 +23,7 @@ public class ControlManager : MonoBehaviour
         RaycastHit hit;
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonUp(0))
         {
             if (Physics.Raycast(ray, out hit, 100f))
             {
