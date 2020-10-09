@@ -26,19 +26,19 @@ Preset:
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: cameraMoveSpeed
-    value: 0.3
-    objectReference: {fileID: 0}
-  - target: {fileID: 0}
-    propertyPath: cameraMousePanSpeed
     value: 0.1
     objectReference: {fileID: 0}
   - target: {fileID: 0}
+    propertyPath: cameraMousePanSpeed
+    value: 0.03
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
     propertyPath: panDetect
-    value: 20
+    value: 10
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: rotationSpeed
-    value: 100
+    value: 300
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: rotationAmount
@@ -46,10 +46,10 @@ Preset:
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: minCameraHeight
-    value: 3
+    value: 2
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: maxCameraHeight
-    value: 20
+    value: 25
     objectReference: {fileID: 0}
   m_ExcludedProperties: []
