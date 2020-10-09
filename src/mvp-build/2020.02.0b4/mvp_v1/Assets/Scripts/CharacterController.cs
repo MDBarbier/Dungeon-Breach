@@ -1,11 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
+using Assets.Scripts.Classes;
 using UnityEngine;
 
 public class CharacterController : MonoBehaviour
 {
     private CombatManager combatManager;    
     private TurnManager turnManager;
+    private ControlManager controlManager;
     private SelectionManager selectionManager;
 
     // Start is called before the first frame update
@@ -14,12 +14,19 @@ public class CharacterController : MonoBehaviour
         combatManager = FindObjectOfType<CombatManager>();        
         turnManager = FindObjectOfType<TurnManager>();
         selectionManager = FindObjectOfType<SelectionManager>();
+        controlManager = FindObjectOfType<ControlManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (controlManager.GetSpacebarDetected())
+        {
+            controlManager.ResetSpacebarDetection();
+            var c = turnManager.GetCharacterWhoActsNext();
+            EndOfTurnAdmin(c);
+            turnManager.PassTurn(c);
+        }
     }
 
     internal void HandleCharacterClick(GameObject clickDetectedOn)
@@ -41,13 +48,20 @@ public class CharacterController : MonoBehaviour
                     print($"{c.attacker.Name} misses {c.ch.Name}");
                 }
 
-                combatManager.ClearTargets();                
-                turnManager.UpdateInitiativeTracker(c.attacker);
-                selectionManager.ResetHighlightedTiles();
-                selectionManager.RemoveSelections();
+                EndOfTurnAdmin(c.attacker);
                 break;
-                
+
             }
         }
+
+        controlManager.clickDetectedOn = null;
+    }
+
+    private void EndOfTurnAdmin(Character c)
+    {
+        combatManager.ClearTargets();
+        turnManager.UpdateInitiativeTracker(c);
+        selectionManager.ResetHighlightedTiles();
+        selectionManager.RemoveSelections();
     }
 }

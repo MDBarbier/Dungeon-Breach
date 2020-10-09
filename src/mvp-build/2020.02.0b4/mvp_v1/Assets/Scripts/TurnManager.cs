@@ -43,7 +43,7 @@ public class TurnManager : MonoBehaviour
             nextCharacterToAct = nextCharacter.Name;
             playersTurn = nextCharacter.PlayerControlled;
         }
-        
+
     }
 
     internal void SetInitiative(List<Character> characters)
@@ -128,5 +128,15 @@ public class TurnManager : MonoBehaviour
         //Update the initiative tracker to indicate this character has had their go
         nextCharacterToAct = "";
         actedCharacters.Add(characterJustMoved);
+    }
+
+
+    internal void PassTurn(Character c)
+    {
+        if (c.PlayerControlled)
+        {
+            print($"{c.Name} passes their turn");
+            UpdateInitiativeTracker(c);
+        }
     }
 }

@@ -4,7 +4,7 @@ public class ControlManager : MonoBehaviour
 {
     private Camera mainCamera;
     internal GameObject clickDetectedOn;
-    internal bool SpaceBarDetected;
+    private bool SpaceBarDetected;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
     [SerializeField] bool debugLogging = false;
@@ -44,4 +44,11 @@ public class ControlManager : MonoBehaviour
             SpaceBarDetected = true;
         }
     }
+
+    internal void ResetSpacebarDetection()
+    {
+        SpaceBarDetected = false;
+    }
+
+    internal bool GetSpacebarDetected() => SpaceBarDetected;
 }
