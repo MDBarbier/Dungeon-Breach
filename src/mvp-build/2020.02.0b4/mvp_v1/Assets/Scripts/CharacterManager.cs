@@ -10,6 +10,7 @@ public class CharacterManager : MonoBehaviour
     private Dictionary<GameObject, Character> playerCharacterList;
     private Dictionary<GameObject, Character> enemyList;
     private TurnManager turnManager;
+    private CombatLogHandler combatLogHandler;
 
     // Start is called before the first frame update
     void Start()
@@ -17,6 +18,7 @@ public class CharacterManager : MonoBehaviour
         turnManager = FindObjectOfType<TurnManager>();
         enemyList = new Dictionary<GameObject, Character>();
         playerCharacterList = new Dictionary<GameObject, Character>();
+        combatLogHandler = FindObjectOfType<CombatLogHandler>();
     }
 
     // Update is called once per frame
@@ -73,11 +75,11 @@ public class CharacterManager : MonoBehaviour
 
             if (match.Value.HP <= 0)
             {
-                print($"{target.Name} is slain!");
+                combatLogHandler.CombatLog($"{target.Name} is slain!");
             }
             else
             {
-                print($"{target.Name} has {target.HP} hit points left");
+                combatLogHandler.CombatLog($"{target.Name} has {target.HP} hit points left");
             }
 
         }
@@ -89,7 +91,7 @@ public class CharacterManager : MonoBehaviour
 
             if (match.Value.HP <= 0)
             {
-                print($"{target.Name} is slain!");
+                combatLogHandler.CombatLog($"{target.Name} is slain!");
                 var go = GetCharacterGameObject(target);
                 enemyList.Remove(go);
                 Destroy(go);

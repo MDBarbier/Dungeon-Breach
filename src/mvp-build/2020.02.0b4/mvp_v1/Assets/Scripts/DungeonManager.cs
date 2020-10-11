@@ -19,6 +19,7 @@ public class DungeonManager : MonoBehaviour
     private DiceRoller diceRoller;
     private CharacterManager characterManager;
     private TurnManager turnManager;
+    private CombatLogHandler combatLogHandler;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
     [SerializeField] GameObject dungetonTile;
@@ -41,6 +42,7 @@ public class DungeonManager : MonoBehaviour
         gridGenerator = FindObjectOfType<GridGenerator>();
         characterManager = FindObjectOfType<CharacterManager>();
         diceRoller = new DiceRoller();
+        combatLogHandler = FindObjectOfType<CombatLogHandler>();
     }    
 
     // Update is called once per frame
@@ -50,7 +52,7 @@ public class DungeonManager : MonoBehaviour
 
         InitialiseFurniture();
 
-        InitialiseCharacters();        
+        InitialiseCharacters();
     }
 
     private void InitialiseGrid()
@@ -102,6 +104,8 @@ public class DungeonManager : MonoBehaviour
             characterManager.InstantiateCharacter("Orc5", 8, 15, 10, 18, 20, 10, 12, false, new Vector3(4f, 0.75f, 4f), redTeamCharacterColour, characterPiece);
 
             turnManager.SetInitiative(characterManager.GetAllCharacters());
+
+            combatLogHandler.CombatLog($"There are {characterManager.GetCpuCharacters().Count} enemies lurking in this dungoen");
 
             //Print the location of all characters to the log
             if (debugLogging)

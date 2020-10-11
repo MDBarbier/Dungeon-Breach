@@ -7,6 +7,7 @@ public class CharacterController : MonoBehaviour
     private TurnManager turnManager;
     private ControlManager controlManager;
     private SelectionManager selectionManager;
+    private CombatLogHandler combatLogHandler;
 
     // Start is called before the first frame update
     void Start()
@@ -15,6 +16,7 @@ public class CharacterController : MonoBehaviour
         turnManager = FindObjectOfType<TurnManager>();
         selectionManager = FindObjectOfType<SelectionManager>();
         controlManager = FindObjectOfType<ControlManager>();
+        combatLogHandler = FindObjectOfType<CombatLogHandler>();
     }
 
     // Update is called once per frame
@@ -38,15 +40,7 @@ public class CharacterController : MonoBehaviour
             if (c.ch.Name == clickDetectedOn.name)
             {
                 //Attack!
-                var result = combatManager.AttackCharacter(c.attacker, c.ch);
-                if (result.Item1)
-                {
-                    print($"{c.attacker.Name} strikes {c.ch.Name} with a mighty blow dealing {result.Item2} damage!");
-                }
-                else
-                {
-                    print($"{c.attacker.Name} misses {c.ch.Name}");
-                }
+                var result = combatManager.AttackCharacter(c.attacker, c.ch);               
 
                 EndOfTurnAdmin(c.attacker);
                 break;

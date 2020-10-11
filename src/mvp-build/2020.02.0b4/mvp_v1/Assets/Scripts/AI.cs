@@ -12,9 +12,11 @@ public class AI : MonoBehaviour
     private CombatManager combatManager;
     private CharacterManager characterManager;
     private int framesBeforeActingOriginalValue;
+    private CombatLogHandler combatLogHandler;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
-    [SerializeField] int framesBeforeActing = 60;    
+    [SerializeField] int framesBeforeActing = 60;
+    [SerializeField] bool debugLogging = false;
 #pragma warning restore 649
 
     // Start is called before the first frame update
@@ -25,6 +27,7 @@ public class AI : MonoBehaviour
         movementManager = FindObjectOfType<MovementManager>();
         characterManager = FindObjectOfType<CharacterManager>();
         combatManager = FindObjectOfType<CombatManager>();
+        combatLogHandler = FindObjectOfType<CombatLogHandler>();
     }
 
     // Update is called once per frame
@@ -51,8 +54,7 @@ public class AI : MonoBehaviour
                 var attack = attacks.FirstOrDefault();
                 if (attack.Value != null)
                 {
-                    var resultOfAttack = combatManager.AttackCharacter(characterToAct, characterManager.GetCharacterByName(attack.Value.name));
-                    print($"{characterToAct.Name} attacks {attack.Value.name} and the attack is {resultOfAttack.Item1} for {resultOfAttack.Item2} damage!");
+                    var resultOfAttack = combatManager.AttackCharacter(characterToAct, characterManager.GetCharacterByName(attack.Value.name));                    
                 }
                 else 
                 {
@@ -63,7 +65,10 @@ public class AI : MonoBehaviour
                     try
                     {
                         var targetToApproach = combatManager.SelectTarget(characterToAct, charGo);
-                        print($"{characterToAct.Name} is giving {targetToApproach.Item2.name} the evils!");
+                        if (debugLogging)
+                        {
+                            combatLogHandler.CombatLog($"{characterToAct.Name} is giving {targetToApproach.Item2.name} the evils!"); 
+                        }
 
                         //compare the position of the target to current position
                         if (targetToApproach.Item1.Item1 > charGo.transform.position.x)
@@ -133,7 +138,7 @@ public class AI : MonoBehaviour
                 
                 if (!hasMoved)
                 {
-                    print($"{characterToAct.Name} bides his time");
+                    combatLogHandler.CombatLog($"{characterToAct.Name} bides his time");
                 }
 
                 //Update initiative

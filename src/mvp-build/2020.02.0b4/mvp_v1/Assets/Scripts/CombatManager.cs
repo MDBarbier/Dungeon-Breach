@@ -11,6 +11,7 @@ public class CombatManager : MonoBehaviour
     private DungeonManager dungeonManager;
     private CharacterManager characterManager;
     private List<(Character ch, GameObject cgo, GameObject sq, Character attacker)> targetedCharacters;
+    private CombatLogHandler combatLogHandler;
 
     // Start is called before the first frame update
     void Start()
@@ -19,6 +20,7 @@ public class CombatManager : MonoBehaviour
         diceRoller = new DiceRoller();
         dungeonManager = FindObjectOfType<DungeonManager>();
         characterManager = FindObjectOfType<CharacterManager>();
+        combatLogHandler = FindObjectOfType<CombatLogHandler>();
     }
 
     // Update is called once per frame
@@ -36,12 +38,16 @@ public class CombatManager : MonoBehaviour
         var attackRollModified = d20 + attacker.DEX;
         var attackHit = attackRollModified > target.AC ? true: false;
         var damageDealt = 0;
-
+        
         if (attackHit)
         {
             damageDealt = attacker.STR + diceRoller.RollDie(6);
-
+            combatLogHandler.CombatLog($"{attacker.Name} attacks {target.Name} and the attack is hits for {damageDealt} damage!");
             characterManager.ApplyDamage(target, damageDealt);
+        }
+        else
+        {
+            combatLogHandler.CombatLog($"{attacker.Name} attacks {target.Name} and the attack misses!");
         }
 
         return (attackHit, damageDealt);

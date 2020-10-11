@@ -16,14 +16,18 @@ public class TurnManager : MonoBehaviour
     private Dictionary<Character, int> initiativeTracker;
     private HashSet<Character> actedCharacters;
     private CharacterManager characterManager;
+    private CombatLogHandler combatLogHandler;
+    private TurnOrderLogHandler turnOrderLogHandler;
 
     // Start is called before the first frame update
     void Start()
     {
+        turnOrderLogHandler = FindObjectOfType<TurnOrderLogHandler>();
+        characterManager = FindObjectOfType<CharacterManager>();
+        combatLogHandler = FindObjectOfType<CombatLogHandler>();
         diceRoller = new DiceRoller();
         initiativeTracker = new Dictionary<Character, int>();
-        actedCharacters = new HashSet<Character>();
-        characterManager = FindObjectOfType<CharacterManager>();
+        actedCharacters = new HashSet<Character>();        
     }
 
     // Update is called once per frame
@@ -52,6 +56,11 @@ public class TurnManager : MonoBehaviour
         {
             var d20 = diceRoller.RollDie(20);
             initiativeTracker.Add(character, d20 + character.DEX);
+        }
+
+        if (initiativeTracker != null)
+        {
+            turnOrderLogHandler.TurnLog(initiativeTracker); 
         }
     }
 
@@ -137,6 +146,8 @@ public class TurnManager : MonoBehaviour
         //Update the initiative tracker to indicate this character has had their go
         nextCharacterToAct = "";
         actedCharacters.Add(characterJustMoved);
+
+        turnOrderLogHandler.TurnLog(initiativeTracker);
     }
 
 
@@ -144,7 +155,7 @@ public class TurnManager : MonoBehaviour
     {
         if (c.PlayerControlled)
         {
-            print($"{c.Name} passes their turn");
+            combatLogHandler.CombatLog($"{c.Name} passes their turn");
             UpdateInitiativeTracker(c);
         }
     }
