@@ -15,5 +15,6 @@ namespace Assets.Scripts.Classes
         public string Backstory { get; set; }
         public string Level { get; set; }
         public int MA { get; set; }
+        public object MAXHP { get; internal set; }
     }
 }

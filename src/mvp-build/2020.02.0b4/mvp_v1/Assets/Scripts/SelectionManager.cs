@@ -6,8 +6,7 @@ public class SelectionManager : MonoBehaviour
 {
     private ControlManager controlManager;
     private CharacterController characterController;
-    private CharacterManager characterManager;
-    private CombatManager combatManager;
+    private CharacterManager characterManager;    
     private GameObject lastSelected;
     private GameObject selectionRing;
     private MovementManager movementManager;
@@ -22,8 +21,7 @@ public class SelectionManager : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {        
-        combatManager = FindObjectOfType<CombatManager>();
+    {   
         movementManager = FindObjectOfType<MovementManager>();
         characterManager = FindObjectOfType<CharacterManager>();
         controlManager = FindObjectOfType<ControlManager>();

@@ -76,6 +76,10 @@ public class CharacterManager : MonoBehaviour
             if (match.Value.HP <= 0)
             {
                 combatLogHandler.CombatLog($"{target.Name} is slain!");
+                var go = GetCharacterGameObject(target);
+                playerCharacterList.Remove(go);
+                Destroy(go);
+                turnManager.RemoveCharacterFromInitiative(target);
             }
             else
             {
@@ -112,7 +116,7 @@ public class CharacterManager : MonoBehaviour
             throw new Exception("Cannot add a character with existing name: " + name);
         }
 
-        var character = new Character() { Name = name, CHA = cha, CON = con, DEX = dex, HP = hp, INT = intelligence, AC = ac, PlayerControlled = playercontrolled, STR = str };
+        var character = new Character() { Name = name, CHA = cha, CON = con, DEX = dex, HP = hp, MAXHP = hp, INT = intelligence, AC = ac, PlayerControlled = playercontrolled, STR = str };
         var charGo = Instantiate(characterPiece, coordinatesToCreateAt, Quaternion.identity);
         charGo.name = name;
         var mesh = charGo.GetComponent<MeshRenderer>();

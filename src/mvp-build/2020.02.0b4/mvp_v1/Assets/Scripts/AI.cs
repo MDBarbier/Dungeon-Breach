@@ -33,7 +33,7 @@ public class AI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!turnManager.IsItPlayerTurn())
+        if (!turnManager.GetCharacterWhoActsNext().PlayerControlled)
         {
             if (framesBeforeActing <= 0)
             {                
@@ -41,20 +41,14 @@ public class AI : MonoBehaviour
 
                 //Get the character that should be acting
                 var characterToAct = turnManager.GetCharacterWhoActsNext();
-                var charGo = characterManager.GetCharacterGameObject(characterToAct);
-
-                //Check it's AI controlled
-                if (characterToAct.PlayerControlled)
-                {
-                    throw new Exception("AI should never be passed a player character!");
-                }
+                var charGo = characterManager.GetCharacterGameObject(characterToAct);                
 
                 //Get available attacks
                 var attacks = combatManager.GetTargetsForAttack(characterToAct, charGo);
                 var attack = attacks.FirstOrDefault();
                 if (attack.Value != null)
                 {
-                    var resultOfAttack = combatManager.AttackCharacter(characterToAct, characterManager.GetCharacterByName(attack.Value.name));                    
+                    combatManager.AttackCharacter(characterToAct, characterManager.GetCharacterByName(attack.Value.name));                    
                 }
                 else 
                 {

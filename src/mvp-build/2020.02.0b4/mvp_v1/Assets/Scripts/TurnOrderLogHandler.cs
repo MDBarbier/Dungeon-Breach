@@ -25,17 +25,15 @@ public class TurnOrderLogHandler : MonoBehaviour
 
     }
 
-    internal void TurnLog(Dictionary<Character, int> turnOrder)
+    internal void TurnLog(List<Character> turnOrder)
     {
         ClearturnLog();
 
         var initiativeList = turnOrder.ToList();
 
-        //initiativeList.Sort((pair1, pair2) => pair1.Value.CompareTo(pair2.Value));
-
         foreach (var item in initiativeList)
         {
-            turnLogEntries.Add(new LoggingEntry() { Timestamp = DateTime.Now, Text = $"{item.Value}: {item.Key.Name}" });
+            turnLogEntries.Add(new LoggingEntry() { Timestamp = DateTime.Now, Text = $"{item.Name}" });
         }
         
         string text = string.Empty;

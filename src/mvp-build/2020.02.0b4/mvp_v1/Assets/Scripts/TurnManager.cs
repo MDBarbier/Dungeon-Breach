@@ -13,29 +13,26 @@ public class TurnManager : MonoBehaviour
 #pragma warning restore 649
 
     private DiceRoller diceRoller;
-    private Dictionary<Character, int> initiativeTracker;
-    private HashSet<Character> actedCharacters;
-    private CharacterManager characterManager;
+    private Dictionary<Character, int> masterInitiativeRecord;
+    private List<Character> turnOrderTracker;    
     private CombatLogHandler combatLogHandler;
     private TurnOrderLogHandler turnOrderLogHandler;
 
     // Start is called before the first frame update
     void Start()
     {
-        turnOrderLogHandler = FindObjectOfType<TurnOrderLogHandler>();
-        characterManager = FindObjectOfType<CharacterManager>();
+        turnOrderLogHandler = FindObjectOfType<TurnOrderLogHandler>();        
         combatLogHandler = FindObjectOfType<CombatLogHandler>();
         diceRoller = new DiceRoller();
-        initiativeTracker = new Dictionary<Character, int>();
-        actedCharacters = new HashSet<Character>();        
+        masterInitiativeRecord = new Dictionary<Character, int>();
+        turnOrderTracker = new List<Character>();
     }
 
     // Update is called once per frame
     void Update()
     {
         if (string.IsNullOrWhiteSpace(nextCharacterToAct))
-        {
-            //Check which character is to move next
+        {            
             var nextCharacter = GetCharacterWhoActsNext();
 
             if (nextCharacter == null)
@@ -43,7 +40,6 @@ public class TurnManager : MonoBehaviour
                 return;
             }
 
-            //Set the player turn depending on owner
             nextCharacterToAct = nextCharacter.Name;
             playersTurn = nextCharacter.PlayerControlled;
         }
@@ -55,101 +51,50 @@ public class TurnManager : MonoBehaviour
         foreach (var character in characters)
         {
             var d20 = diceRoller.RollDie(20);
-            initiativeTracker.Add(character, d20 + character.DEX);
+            masterInitiativeRecord.Add(character, d20 + character.DEX);
         }
 
-        if (initiativeTracker != null)
-        {
-            turnOrderLogHandler.TurnLog(initiativeTracker); 
-        }
+        UpdateTurnOrderTracker();
+
     }
 
-    internal Character GetCharacterWhoActsNext()
+    private void UpdateTurnOrderTracker()
     {
-        if (string.IsNullOrWhiteSpace(nextCharacterToAct))
+        turnOrderTracker = new List<Character>();
+        var tempList = masterInitiativeRecord.ToList();
+        tempList.Sort((pair1, pair2) => pair1.Value.CompareTo(pair2.Value));
+        
+        foreach (var item in tempList)
         {
-            int highestSoFar = 0;
-            Character highestCharacter = null;
-
-            foreach (var item in initiativeTracker)
-            {
-                //have all characters acted? if so reset acted characters
-                if (actedCharacters.Count == initiativeTracker.Count)
-                {
-                    actedCharacters.Clear();
-                    actedCharacters = new HashSet<Character>();
-                }
-
-                //has the character acted? if so skip
-                var actedMatch = actedCharacters.Where(a => a.Name == item.Key.Name).FirstOrDefault();
-
-                if (actedMatch != null)
-                {
-                    continue;
-                }
-
-                if (item.Value > highestSoFar)
-                {
-                    //current item has higher value, replace highest so far
-                    highestSoFar = item.Value;
-                    highestCharacter = item.Key;
-                }
-                else if (highestSoFar == item.Value)
-                {
-                    if (item.Key.DEX > highestCharacter.DEX)
-                    {
-                        highestSoFar = item.Value;
-                        highestCharacter = item.Key;
-                    }
-                    else if (highestCharacter.DEX > item.Key.DEX)
-                    {
-                        //leave as-is
-                    }
-                    else
-                    {
-                        //roll for it!
-                        var d100 = diceRoller.RollDie(100);
-                        if (d100 < 50)
-                        {
-                            highestSoFar = item.Value;
-                            highestCharacter = item.Key;
-                        }
-                    }
-                }
-            }
-
-            return highestCharacter;
+            turnOrderTracker.Add(item.Key);
         }
 
-        //If we get here, return the character who is already assigned to act next
-        return characterManager.GetCharacterByName(nextCharacterToAct);
-    }
+        if (turnOrderTracker != null)
+        {
+            turnOrderLogHandler.TurnLog(turnOrderTracker);
+        }
+    }    
 
     internal void RemoveCharacterFromInitiative(Character target)
     {
-        initiativeTracker.Remove(target);
+        masterInitiativeRecord.Remove(target);
+        turnOrderTracker.Remove(target);
+
         if (nextCharacterToAct == target.Name)
         {
             nextCharacterToAct = GetCharacterWhoActsNext().Name;
         }
-    }
-
-    internal bool IsItPlayerTurn() => playersTurn;
-
-    internal void ToggleTurn()
-    {
-        playersTurn = !playersTurn;
-    }
+    }     
 
     internal void UpdateInitiativeTracker(Character characterJustMoved)
-    {
-        //Update the initiative tracker to indicate this character has had their go
-        nextCharacterToAct = "";
-        actedCharacters.Add(characterJustMoved);
-
-        turnOrderLogHandler.TurnLog(initiativeTracker);
+    {        
+        nextCharacterToAct = "";        
+        var nextChar = turnOrderTracker.Where(a => a.Name == characterJustMoved.Name).Single();
+        turnOrderTracker.Remove(nextChar);
+        turnOrderTracker.Add(nextChar);
+        turnOrderLogHandler.TurnLog(turnOrderTracker);
+        nextCharacterToAct = GetCharacterWhoActsNext().Name;        
     }
-
 
     internal void PassTurn(Character c)
     {
@@ -159,4 +104,6 @@ public class TurnManager : MonoBehaviour
             UpdateInitiativeTracker(c);
         }
     }
+
+    internal Character GetCharacterWhoActsNext() => turnOrderTracker.FirstOrDefault();
 }
