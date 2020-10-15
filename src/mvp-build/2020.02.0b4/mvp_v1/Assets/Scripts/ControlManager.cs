@@ -1,9 +1,11 @@
+using System;
 using UnityEngine;
 
 public class ControlManager : MonoBehaviour
 {
     private Camera mainCamera;
     internal GameObject clickDetectedOn;
+    internal GameObject hoverDetectedOn;
     private bool SpaceBarDetected;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
@@ -39,9 +41,33 @@ public class ControlManager : MonoBehaviour
             }
         }
 
+        HandleHover(ray);
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             SpaceBarDetected = true;
+        }
+    }
+
+    private void HandleHover(Ray ray)
+    {
+        RaycastHit hit;        
+
+        if (Physics.Raycast(ray, out hit, 100f))
+        {
+            if (hit.transform)
+            {
+                hoverDetectedOn = hit.transform.gameObject;
+            }
+        }
+        else
+        {
+            hoverDetectedOn = null;
+        }
+        
+        if (hoverDetectedOn != null && debugLogging)
+        {
+            print($"hover detected on {hoverDetectedOn.name}");
         }
     }
 

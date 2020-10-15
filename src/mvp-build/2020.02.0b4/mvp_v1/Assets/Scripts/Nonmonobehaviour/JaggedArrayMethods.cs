@@ -35,5 +35,23 @@ namespace Assets.Scripts.Nonmonobehaviour
 
             return output;
         }
+
+        internal static void AddTagToJaggedArrayOfGameObjects(GameObject[][] gameObjectsArray, string tag)
+        {
+            var outerLength = gameObjectsArray.Length;            
+
+            for (int i = 0; i < outerLength; i++)
+            {
+                var innerLength = gameObjectsArray[i].Length;
+
+                for (int j = 0; j < innerLength; j++)
+                {
+                    if (gameObjectsArray[i][j] != null)
+                    {
+                        gameObjectsArray[i][j].tag = tag;
+                    }
+                }
+            }
+        }
     }
 }

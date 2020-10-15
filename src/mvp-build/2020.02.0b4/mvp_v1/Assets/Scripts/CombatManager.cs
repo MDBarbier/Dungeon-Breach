@@ -93,7 +93,7 @@ public class CombatManager : MonoBehaviour
                     if (characterToAttack.Item2.PlayerControlled != attacker.PlayerControlled)
                     {
                         targetedCharacters.Add((characterToAttack.Item2, characterToAttack.Item1, squareToCheck.Value, attacker));
-                        possibleAttacks.Add((squareToCheck.Key.Item1, squareToCheck.Key.Item1), characterToAttack.Item1);
+                        possibleAttacks.Add((squareToCheck.Key.Item1, squareToCheck.Key.Item2), characterToAttack.Item1);
                     }
                 }                                
             }
