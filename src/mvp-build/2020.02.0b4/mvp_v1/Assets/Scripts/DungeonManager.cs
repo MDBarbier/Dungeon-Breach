@@ -128,7 +128,7 @@ public class DungeonManager : MonoBehaviour
         furniturePositions[4][2] = Instantiate(dungeonFurniture, new Vector3(4, 0.65f, 2), Quaternion.identity);
 
         JaggedArrayMethods.AddTagToJaggedArrayOfGameObjects(furniturePositions, "Scenery");
-
+        JaggedArrayMethods.SetParentOfJaggedArrayGameObjects(furniturePositions, "InstantiatedFurniture");
         //log the jagged array to console
         if (debugLogging)
         {

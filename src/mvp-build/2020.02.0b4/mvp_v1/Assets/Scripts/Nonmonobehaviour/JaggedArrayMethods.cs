@@ -53,5 +53,24 @@ namespace Assets.Scripts.Nonmonobehaviour
                 }
             }
         }
+
+        internal static void SetParentOfJaggedArrayGameObjects(GameObject[][] gameObjectsArray, string parentName)
+        {
+            var outerLength = gameObjectsArray.Length;
+
+            for (int i = 0; i < outerLength; i++)
+            {
+                var innerLength = gameObjectsArray[i].Length;
+
+                for (int j = 0; j < innerLength; j++)
+                {
+                    if (gameObjectsArray[i][j] != null)
+                    {
+                        var parent = GameObject.Find(parentName);
+                        gameObjectsArray[i][j].transform.parent = parent.transform;
+                    }
+                }
+            }
+        }
     }
 }

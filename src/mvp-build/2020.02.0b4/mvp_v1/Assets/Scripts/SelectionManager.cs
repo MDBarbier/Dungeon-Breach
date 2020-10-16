@@ -103,6 +103,8 @@ public class SelectionManager : MonoBehaviour
                 selectionRing = Instantiate(selectionIndicator, new Vector3(charGameObject.transform.position.x, 0.35f,
                     charGameObject.transform.position.z), Quaternion.identity);
                 selectionRing.name = "SelectionRing";
+                var parent = GameObject.Find("InstantiatedMisc");
+                selectionRing.transform.parent = parent.transform;
                 lastSelected = charGameObject;
 
                 selectedCharacter = (charGameObject, nextCharacterToAct);

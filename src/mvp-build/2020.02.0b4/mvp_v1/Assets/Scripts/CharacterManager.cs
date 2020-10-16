@@ -118,8 +118,12 @@ public class CharacterManager : MonoBehaviour
 
         var character = new Character() { Name = name, CHA = cha, CON = con, DEX = dex, HP = hp, MAXHP = hp, INT = intelligence, AC = ac, PlayerControlled = playercontrolled, STR = str };
         var charGo = Instantiate(characterPiece, coordinatesToCreateAt, Quaternion.identity);
+        
+        //Set attributes on the gameobject
         charGo.name = name;
         charGo.tag = "Character";
+        var parent = GameObject.Find("InstantiatedCharacters");
+        charGo.transform.parent = parent.transform;
         var mesh = charGo.GetComponent<MeshRenderer>();
         mesh.material = material;
 
