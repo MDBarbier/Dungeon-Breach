@@ -37,6 +37,7 @@ public class DungeonManager : MonoBehaviour
     [SerializeField] int numberOfEnemies;
     [SerializeField] Vector3 playerStartingPoint;
     [SerializeField] Vector3 enemyStartingPoint;
+    [SerializeField] int numberOfFurniturePieces;
 #pragma warning restore 649
 
     // Start is called before the first frame update
@@ -205,7 +206,7 @@ public class DungeonManager : MonoBehaviour
 
         System.Random rand = new System.Random();
         
-        var numberOfObjects = rand.Next(xlength, xlength*2);
+        var numberOfObjects = numberOfFurniturePieces;
 
         for (int i = 0; i < numberOfObjects; i++)
         {
