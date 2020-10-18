@@ -33,7 +33,7 @@ public class AI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!turnManager.GetCharacterWhoActsNext().PlayerControlled)
+        if (turnManager.GetCharacterWhoActsNext() != null && !turnManager.GetCharacterWhoActsNext().PlayerControlled)
         {
             if (framesBeforeActing <= 0)
             {                
@@ -41,6 +41,17 @@ public class AI : MonoBehaviour
 
                 //Get the character that should be acting
                 var characterToAct = turnManager.GetCharacterWhoActsNext();
+
+                if (characterToAct == null)
+                {
+                    if (debugLogging)
+                    {
+                        print($"returning from AI.{nameof(this.Update)} because the characterToAct is null");
+                    }
+
+                    return;
+                }
+
                 var charGo = characterManager.GetCharacterGameObject(characterToAct);                
 
                 //Get available attacks

@@ -16,7 +16,8 @@ public class SelectionManager : MonoBehaviour
     public (GameObject, Character) selectedCharacter;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
-    [SerializeField] GameObject selectionIndicator;    
+    [SerializeField] GameObject selectionIndicator;
+    [SerializeField] bool debugLogging = false;
 #pragma warning restore 649
 
     // Start is called before the first frame update
@@ -85,10 +86,24 @@ public class SelectionManager : MonoBehaviour
         if (turnManager != null && characterManager != null)
         {
             var nextCharacterToAct = turnManager.GetCharacterWhoActsNext();
+
+            if (nextCharacterToAct == null)
+            {
+                if (debugLogging)
+                {
+                    print($"returning from {nameof(this.AddSelectionIfPlayerCharacterNext)} because the nextCharacterToAct is null"); 
+                }
+                return;
+            }
+
             var charGameObject = characterManager.GetCharacterGameObject(nextCharacterToAct);
 
             if (charGameObject == null)
             {
+                if (debugLogging)
+                {
+                    print($"returning from {nameof(this.AddSelectionIfPlayerCharacterNext)} because the charGameObject is null"); 
+                }
                 return;
             }
 

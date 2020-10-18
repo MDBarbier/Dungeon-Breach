@@ -25,20 +25,8 @@ public class InfoPaneHandler : MonoBehaviour
 
         if (selectedCharacter != null)
         {
-            string infoString = PrepareInfoString(selectedCharacter);
+            string infoString = selectedCharacter.ToString();
             infoPaneTextElement.text = infoString;
         }
-    }
-
-    private string PrepareInfoString(Character character)
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.Append($"Selected unit details\n");
-        sb.Append($"Name: {character.Name}\n");
-        sb.Append($"HP: {character.HP}/{character.MAXHP}\n");
-        sb.Append($"AC: {character.AC}\n");
-        sb.Append($"STR: {character.STR}\n");
-        sb.Append($"DEX: {character.DEX}\n");
-        return sb.ToString();
     }
 }

@@ -33,7 +33,7 @@ public class HoveredInfoHandler : MonoBehaviour
                     
                     if (c != selectionManager.selectedCharacter.Item2)
                     {
-                        textToDisplay = PrepareInfoString(c);
+                        textToDisplay = c.ToString();
                     }
                     else
                     {
@@ -70,18 +70,6 @@ public class HoveredInfoHandler : MonoBehaviour
         {
             hoverPaneElement.text = textToDisplay;
         }
-    }
-
-    private string PrepareInfoString(Character character)
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.Append($"Selected unit details\n");
-        sb.Append($"Name: {character.Name}\n");
-        sb.Append($"HP: {character.HP}/{character.MAXHP}\n");
-        sb.Append($"AC: {character.AC}\n");
-        sb.Append($"STR: {character.STR}\n");
-        sb.Append($"DEX: {character.DEX}\n");
-        return sb.ToString();
     }
 
     private string PrepareInfoString(string[] message)

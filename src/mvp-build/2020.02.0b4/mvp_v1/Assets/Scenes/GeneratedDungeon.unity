@@ -354,6 +354,34 @@ PrefabInstance:
       propertyPath: m_Name
       value: Administrative
       objectReference: {fileID: 0}
+    - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
+      propertyPath: xlength
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
+      propertyPath: zlength
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
+      propertyPath: enemyStartingPoint.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
+      propertyPath: enemyStartingPoint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
+      propertyPath: numberOfPlayerCharacters
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
+      propertyPath: numberOfEnemies
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
+      propertyPath: enemyStartingPoint.z
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
 --- !u!1001 &7725120466908218375

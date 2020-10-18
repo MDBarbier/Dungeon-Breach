@@ -1,4 +1,5 @@
 using Assets.Scripts.Classes;
+using Assets.Scripts.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,6 +78,12 @@ public class CharacterManager : MonoBehaviour
             {
                 combatLogHandler.CombatLog($"{target.Name} is slain!");
                 var go = GetCharacterGameObject(target);
+
+                if (go == null)
+                {
+                    throw new Exception($"ApplyDamage method error: character {target.Name} could not be found!");
+                }
+
                 playerCharacterList.Remove(go);
                 Destroy(go);
                 turnManager.RemoveCharacterFromInitiative(target);
@@ -97,6 +104,12 @@ public class CharacterManager : MonoBehaviour
             {
                 combatLogHandler.CombatLog($"{target.Name} is slain!");
                 var go = GetCharacterGameObject(target);
+
+                if (go == null)
+                {
+                    throw new Exception($"ApplyDamage method error: character {target.Name} could not be found!");
+                }
+
                 enemyList.Remove(go);
                 Destroy(go);
                 turnManager.RemoveCharacterFromInitiative(target);
@@ -105,29 +118,28 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    internal (Character, GameObject) InstantiateCharacter(string name, int cha, int str, int dex, int con, int hp, int intelligence, int ac, bool playercontrolled, Vector3 coordinatesToCreateAt, Material material, GameObject characterPiece)
+    internal GameObject InstantiateCharacter(Character character, Vector3 coordinatesToCreateAt, Material material, GameObject characterPiece)
     {
         //check the name is not in use
-        var matchP = GetCharacterByName(name);
-        var matchE = GetCharacterByName(name);
-
+        var matchP = GetCharacterByName(character.Name);
+        var matchE = GetCharacterByName(character.Name);
+        
         if (!string.IsNullOrWhiteSpace(matchP.Name) || !string.IsNullOrWhiteSpace(matchE.Name))
         {
-            throw new Exception("Cannot add a character with existing name: " + name);
+            throw new Exception("Cannot add a character with the same name: " + character.Name);
         }
 
-        var character = new Character() { Name = name, CHA = cha, CON = con, DEX = dex, HP = hp, MAXHP = hp, INT = intelligence, AC = ac, PlayerControlled = playercontrolled, STR = str };
         var charGo = Instantiate(characterPiece, coordinatesToCreateAt, Quaternion.identity);
         
         //Set attributes on the gameobject
-        charGo.name = name;
+        charGo.name = character.Name;
         charGo.tag = "Character";
         var parent = GameObject.Find("InstantiatedCharacters");
         charGo.transform.parent = parent.transform;
         var mesh = charGo.GetComponent<MeshRenderer>();
         mesh.material = material;
 
-        if (playercontrolled)
+        if (character.PlayerControlled)
         {
             playerCharacterList.Add(charGo, character);
         }
@@ -136,7 +148,7 @@ public class CharacterManager : MonoBehaviour
             enemyList.Add(charGo, character);
         }
 
-        return (character, charGo);
+        return charGo;
     }
 
     internal void PrintCharacters()
