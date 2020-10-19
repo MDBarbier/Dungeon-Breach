@@ -55,11 +55,11 @@ public class AI : MonoBehaviour
                 var charGo = characterManager.GetCharacterGameObject(characterToAct);                
 
                 //Get available attacks
-                var attacks = combatManager.GetTargetsForAttack(characterToAct, charGo);
+                var attacks = combatManager.GetTargetsForAttack(characterToAct, charGo, characterToAct.Range);
                 var attack = attacks.FirstOrDefault();
                 if (attack.Value != null)
                 {
-                    combatManager.AttackCharacter(characterToAct, characterManager.GetCharacterByName(attack.Value.name));                    
+                    combatManager.PerformAttack(characterToAct, characterManager.GetCharacterByName(attack.Value.name));                    
                 }
                 else 
                 {

@@ -10,6 +10,7 @@ namespace Assets.Scripts.Classes
     public class Character
     {
         public string Name { get; set; }
+        public Subclasses Subclass { get; set; }
         public int STR { get; set; }
         public int CON { get; set; }
         public int INT { get; set; }
@@ -17,22 +18,32 @@ namespace Assets.Scripts.Classes
         public int CHA { get; set; }
         public int HP { get; set; }
         public int AC { get; set; }
+        public int Range { get; set; }
         public bool PlayerControlled { get; set; }
         public string Backstory { get; set; }
         public int Level { get; set; }
         public int MA { get; set; }
-        public object MAXHP { get; internal set; }
+        public int MAXHP { get; internal set; }
         public Races Race { get; set; }
-
+        public DamageTypes DamageType { get; set; }
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append($"Selected unit details\n");
             sb.Append($"Name: {this.Name}\n");
+            if (this.Subclass != Subclasses.None)
+            {
+                sb.Append($"Class: {this.Subclass}\n");
+            }
+            if (this.DamageType != DamageTypes.None)
+            {
+                sb.Append($"Damage Type: {this.DamageType}\n");
+            }
             sb.Append($"HP: {this.HP}/{this.MAXHP}\n");
             sb.Append($"AC: {this.AC}\n");
             sb.Append($"STR: {this.STR}\n");
             sb.Append($"DEX: {this.DEX}\n");
+            
             return sb.ToString();
         }
 
@@ -96,13 +107,13 @@ namespace Assets.Scripts.Classes
         }
     }
 
-    public class Fighter : Character
+    public class MeleeCharacter : Character
     {
-        public Fighter()
+        public MeleeCharacter()
         {
             this.STR = 14;
             this.DEX = 14;
-            this.CON = 16;
+            this.CON = 10;
             this.CHA = 10;
             this.HP = this.CON * 8;
             this.MAXHP = this.HP;
@@ -110,22 +121,50 @@ namespace Assets.Scripts.Classes
             this.Level = 1;
             this.MA = this.DEX / 4 + 1;
             this.AC = this.DEX / 4 + 10;
+            this.Range = 1;
+            this.DamageType = DamageTypes.Physical;
         }
     }
-    public class Bandit : Character
+
+    public class RangedCharacter : Character
     {
-        public Bandit()
+        public RangedCharacter()
         {
-            this.STR = 11;
-            this.DEX = 14;
-            this.CON = 9;
-            this.CHA = 10;
+            this.STR = 10;
+            this.DEX = 18;
+            this.CON = 4;
+            this.CHA = 12;
             this.HP = this.CON * 8;
             this.MAXHP = this.HP;
-            this.INT = 8;
+            this.INT = 10;
             this.Level = 1;
             this.MA = this.DEX / 4 + 1;
-            this.AC = this.DEX / 4 + 10;
+            this.AC = this.DEX / 4 + 7;
+            this.Range = 100;
+            this.DamageType = DamageTypes.Physical;
+        }
+    }
+
+    public class MagicCharacter : Character
+    {
+        public MagicCharacter()
+        {
+            this.STR = 6;
+            this.DEX = 10;
+            this.CON = 4;
+            this.CHA = 16;
+            this.HP = this.CON * 8;
+            this.MAXHP = this.HP;
+            this.INT = 16;
+            this.Level = 1;
+            this.MA = this.DEX / 4 + 1;
+            this.AC = this.DEX / 4 + 5;
+            this.Range = 100;
+        }
+
+        public void SetDamageType(DamageTypes damageType)
+        {
+            this.DamageType = damageType;
         }
     }
 }

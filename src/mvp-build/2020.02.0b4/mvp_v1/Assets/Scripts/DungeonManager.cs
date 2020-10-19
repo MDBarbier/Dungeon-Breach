@@ -1,4 +1,5 @@
 using Assets.Scripts.Classes;
+using Assets.Scripts.Enums;
 using Assets.Scripts.Nonmonobehaviour;
 using Assets.Scripts.NonMonoBehaviour;
 using System;
@@ -28,13 +29,19 @@ public class DungeonManager : MonoBehaviour
     [SerializeField] GameObject characterPiece;
     [SerializeField] Material blueTeamCharacterColour;
     [SerializeField] Material redTeamCharacterColour;
+    [SerializeField] Material blueTeamCharacterColour2;
+    [SerializeField] Material blueTeamCharacterColour3;
+    [SerializeField] Material redTeamCharacterColour2;
     [SerializeField] GameObject dungeonFurniture;
     [SerializeField] Material dungeonFurnitureMaterial;
     [SerializeField] bool debugLogging = false;
     [SerializeField] int xlength = 5;
     [SerializeField] int zlength = 5;
-    [SerializeField] int numberOfPlayerCharacters;
-    [SerializeField] int numberOfEnemies;
+    [SerializeField] int numberOfPlayerMeleeCharacters;
+    [SerializeField] int numberOfPlayerHealers;
+    [SerializeField] int numberOfPlayerRangedCharacters;
+    [SerializeField] int numberOfMeleeEnemies;
+    [SerializeField] int numberOfRangedEnemies;
     [SerializeField] Vector3 playerStartingPoint;
     [SerializeField] Vector3 enemyStartingPoint;
     [SerializeField] int numberOfFurniturePieces;
@@ -110,26 +117,61 @@ public class DungeonManager : MonoBehaviour
         {
             hasInitialisedCharacters = true;
 
-            for (int i = 0; i < numberOfPlayerCharacters; i++)
-            {                
-                var newFighter = new Fighter();
-                newFighter.Race = Assets.Scripts.Enums.Races.Human;
-                newFighter.PlayerControlled = true;
-                newFighter.SetRandomName(random, characterManager.GetAllCharacters());
-
+            for (int i = 0; i < numberOfPlayerHealers; i++)
+            {
+                var newChar = new MagicCharacter();
+                newChar.SetDamageType(DamageTypes.Healing);
+                newChar.Race = Races.Human;
+                newChar.PlayerControlled = true;
+                newChar.SetRandomName(random, characterManager.GetAllCharacters());
+                newChar.Subclass = Subclasses.Healer;
                 var spaceToInstantiate = FindSpaceToInstantiate(playerStartingPoint);
-                characterManager.InstantiateCharacter(newFighter, new Vector3(spaceToInstantiate.x, 0.75f, spaceToInstantiate.z), blueTeamCharacterColour, characterPiece);
+                characterManager.InstantiateCharacter(newChar, new Vector3(spaceToInstantiate.x, 0.75f, spaceToInstantiate.z), blueTeamCharacterColour3, characterPiece);
             }
 
-            for (int i = 0; i < numberOfEnemies; i++)
-            {                
-                var newBandit = new Bandit();                
-                newBandit.Race = Assets.Scripts.Enums.Races.Orc;                
-                newBandit.SetRandomName(random, characterManager.GetAllCharacters());
+            for (int i = 0; i < numberOfPlayerRangedCharacters; i++)
+            {
+                var newChar = new RangedCharacter();
+                newChar.Race = Races.Human;
+                newChar.PlayerControlled = true;
+                newChar.SetRandomName(random, characterManager.GetAllCharacters());
+                newChar.Subclass = Subclasses.Archer;
+                var spaceToInstantiate = FindSpaceToInstantiate(playerStartingPoint);
+                characterManager.InstantiateCharacter(newChar, new Vector3(spaceToInstantiate.x, 0.75f, spaceToInstantiate.z), blueTeamCharacterColour2, characterPiece);
+            }
 
+            for (int i = 0; i < numberOfPlayerMeleeCharacters; i++)
+            {
+                var newChar = new MeleeCharacter();
+                newChar.Race = Assets.Scripts.Enums.Races.Human;
+                newChar.PlayerControlled = true;
+                newChar.SetRandomName(random, characterManager.GetAllCharacters());
+                newChar.Subclass = Assets.Scripts.Enums.Subclasses.Fighter;
+                var spaceToInstantiate = FindSpaceToInstantiate(playerStartingPoint);
+                characterManager.InstantiateCharacter(newChar, new Vector3(spaceToInstantiate.x, 0.75f, spaceToInstantiate.z), blueTeamCharacterColour, characterPiece);
+            }
+
+            for (int i = 0; i < numberOfRangedEnemies; i++)
+            {
+                var newChar = new RangedCharacter();
+                newChar.Race = Assets.Scripts.Enums.Races.Orc;
+                newChar.SetRandomName(random, characterManager.GetAllCharacters());
+                newChar.Subclass = Assets.Scripts.Enums.Subclasses.Bandit;
                 var spaceToInstantiate = FindSpaceToInstantiate(enemyStartingPoint);
-                characterManager.InstantiateCharacter(newBandit, new Vector3(spaceToInstantiate.x, 0.75f, spaceToInstantiate.z), redTeamCharacterColour, characterPiece);
+                characterManager.InstantiateCharacter(newChar, new Vector3(spaceToInstantiate.x, 0.75f, spaceToInstantiate.z), redTeamCharacterColour2, characterPiece);
             }
+
+            for (int i = 0; i < numberOfMeleeEnemies; i++)
+            {                
+                var newChar = new MeleeCharacter();
+                newChar.Race = Assets.Scripts.Enums.Races.Orc;                
+                newChar.SetRandomName(random, characterManager.GetAllCharacters());
+                newChar.Subclass = Assets.Scripts.Enums.Subclasses.Bandit;
+                var spaceToInstantiate = FindSpaceToInstantiate(enemyStartingPoint);
+                characterManager.InstantiateCharacter(newChar, new Vector3(spaceToInstantiate.x, 0.75f, spaceToInstantiate.z), redTeamCharacterColour, characterPiece);
+            }
+
+            
 
             turnManager.SetInitiative(characterManager.GetAllCharacters());
 

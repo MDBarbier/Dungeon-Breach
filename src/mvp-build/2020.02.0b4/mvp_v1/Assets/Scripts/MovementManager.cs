@@ -50,7 +50,21 @@ public class MovementManager : MonoBehaviour
             selectionManager.ResetHighlightedTiles();
 
             var possibleMoves = GetMoves(selectionManager.selectedCharacter);
-            var possibleAttacks = combatManager.GetTargetsForAttack(selectionManager.selectedCharacter.Item2, selectionManager.selectedCharacter.Item1);
+
+            Dictionary<(int, int), GameObject> possibleAttacks = new Dictionary<(int, int), GameObject>();
+
+            if (selectionManager.selectedCharacter.Item2.DamageType == Assets.Scripts.Enums.DamageTypes.Physical)
+            {
+                possibleAttacks = combatManager.GetTargetsForAttack(selectionManager.selectedCharacter.Item2, selectionManager.selectedCharacter.Item1, selectionManager.selectedCharacter.Item2.Range); 
+            }
+            else if (selectionManager.selectedCharacter.Item2.DamageType == Assets.Scripts.Enums.DamageTypes.Healing)
+            {
+                possibleAttacks = combatManager.GetTargetsForAttack(selectionManager.selectedCharacter.Item2, selectionManager.selectedCharacter.Item1, selectionManager.selectedCharacter.Item2.Range, true, false);
+            }
+            else if (selectionManager.selectedCharacter.Item2.DamageType == Assets.Scripts.Enums.DamageTypes.Magic)
+            {
+                possibleAttacks = combatManager.GetTargetsForAttack(selectionManager.selectedCharacter.Item2, selectionManager.selectedCharacter.Item1, selectionManager.selectedCharacter.Item2.Range, true, true);
+            }
 
             foreach (var tile in possibleAttacks)
             {

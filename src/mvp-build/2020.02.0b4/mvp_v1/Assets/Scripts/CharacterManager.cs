@@ -88,6 +88,11 @@ public class CharacterManager : MonoBehaviour
                 Destroy(go);
                 turnManager.RemoveCharacterFromInitiative(target);
             }
+            else if (match.Value.HP > match.Value.MAXHP)
+            {
+                match.Value.HP = match.Value.MAXHP;
+                combatLogHandler.CombatLog($"{target.Name} is fully healed");
+            }
             else
             {
                 combatLogHandler.CombatLog($"{target.Name} has {target.HP} hit points left");

@@ -39,11 +39,20 @@ public class CharacterController : MonoBehaviour
         {
             if (c.ch.Name == clickDetectedOn.name)
             {
-                //Attack!
-                var result = combatManager.AttackCharacter(c.attacker, c.ch);               
-
-                EndOfTurnAdmin(c.attacker);
-                break;
+                if (c.ch.PlayerControlled)
+                {
+                    //heal
+                    combatManager.PerformHealing(c.attacker, c.ch);
+                    EndOfTurnAdmin(c.attacker);
+                    break; 
+                }
+                else
+                {
+                    //Attack
+                    combatManager.PerformAttack(c.attacker, c.ch);
+                    EndOfTurnAdmin(c.attacker);
+                    break;
+                }
 
             }
         }

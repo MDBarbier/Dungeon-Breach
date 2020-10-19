@@ -356,15 +356,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
       propertyPath: xlength
-      value: 7
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
       propertyPath: zlength
-      value: 7
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
       propertyPath: enemyStartingPoint.x
-      value: 5
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
       propertyPath: enemyStartingPoint.y
@@ -380,12 +380,40 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
       propertyPath: enemyStartingPoint.z
-      value: 5
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
       propertyPath: numberOfFurniturePieces
       value: 12
       objectReference: {fileID: 0}
+    - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
+      propertyPath: numberOfPlayerMeleeCharacters
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
+      propertyPath: numberOfPlayerRangedCharacters
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
+      propertyPath: numberOfMeleeEnemies
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
+      propertyPath: blueTeamCharacterColour2
+      value: 
+      objectReference: {fileID: 2100000, guid: d7caf0c2f3819e1458bb143454a8b545, type: 2}
+    - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
+      propertyPath: redTeamCharacterColour2
+      value: 
+      objectReference: {fileID: 2100000, guid: d297be8086930b045a546a487594ae77, type: 2}
+    - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
+      propertyPath: numberOfPlayerHealers
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
+      propertyPath: blueTeamCharacterColour3
+      value: 
+      objectReference: {fileID: 2100000, guid: 186c986fd42bba54aa8b1e115ae62e00, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
 --- !u!1001 &7725120466908218375
