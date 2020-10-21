@@ -7,11 +7,14 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/MainMenu.unity
-    guid: 361aef56bcb4de341a1ac7ed7754d757
+    guid: f765fe7d260f66f4b928116154815028
   - enabled: 1
     path: Assets/Scenes/GameConfiguration.unity
     guid: 7190363004739ef438b55d4ee34c5338
   - enabled: 1
     path: Assets/Scenes/GeneratedDungeon.unity
     guid: 4cd943881377f364599c10bb860d9887
+  - enabled: 1
+    path: Assets/Scenes/EndGameScreen.unity
+    guid: 361aef56bcb4de341a1ac7ed7754d757
   m_configObjects: {}

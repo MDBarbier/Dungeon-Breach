@@ -1,129 +1,156 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class GamePersistenceEngine : MonoBehaviour
 {
+    public GameState GameState { get; set; } = GameState.Setup;    
+    private BattleState _battleState;
+    private AudioSource audioSource;
+
+    public BattleState BattleState { 
+        get 
+        { 
+            if (_battleState == null)
+            {
+                return new BattleState();
+            }
+            else
+            {
+                return _battleState;
+            }            
+        } 
+        private set 
+        {
+            this._battleState = value;
+        } 
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        UpdateMeleeNo();
-        UpdateRangedNo();
-        UpdateHealerNo();
-        UpdateEnemyMeleeNo();
-        UpdateEnemyRangedNo();
+        audioSource = GetComponent<AudioSource>();
+        audioSource.Play();
+        StartCoroutine(FadeAudioSource.StartFade(audioSource, 5.0f, 0.25f));
     }
 
     // Update is called once per frame
     void Update()
     {
-       
-    }
-
-    public void UpdateMeleeNo()
-    {
-        var playerMeleeNo = GameObject.Find("PlayerMeleeNumber");
-        var playerMeleeSlider = GameObject.Find("PlayerMeleeSlider");
-        if (playerMeleeNo != null && playerMeleeSlider != null)
+        if (BattleState.PlayerCharacters == 0 && GameState == GameState.Underway)
         {
-            var textElements = playerMeleeNo.GetComponent<Text>();
-            var slider = playerMeleeSlider.GetComponent<Slider>();
+            GameState = GameState.FinishedLost;
+        }
 
-            if (textElements != null && slider != null)
-            {
-                textElements.text = slider.value.ToString();
-            }
+        if (BattleState.EnemyCharacters == 0 && GameState == GameState.Underway)
+        {
+            GameState = GameState.FinishedWon;
+        }
+
+        switch (this.GameState)
+        {
+            case GameState.Setup:
+                break;
+            case GameState.Underway:
+                break;
+            case GameState.FinishedWon:
+            case GameState.FinishedLost:
+                if (SceneManager.GetActiveScene().buildIndex != 3)
+                {
+                    SceneManager.LoadScene(3);
+                }
+                break;
+            default:
+                break;
         }
     }
 
-    public void UpdateRangedNo()
+    // Awake is called when the script instance is being loaded
+    private void Awake()
     {
-        var playerNo = GameObject.Find("PlayerRangedNumber");
-        var playerSlider = GameObject.Find("PlayerRangedSlider");
-        if (playerNo != null && playerSlider != null)
+        if (FindObjectsOfType<GamePersistenceEngine>().Length > 1)
         {
-            var textElements = playerNo.GetComponent<Text>();
-            var slider = playerSlider.GetComponent<Slider>();
-
-            if (textElements != null && slider != null)
-            {
-                textElements.text = slider.value.ToString();
-            }
+            Destroy(gameObject); //suicide if not the only instance
+        }
+        else
+        {
+            DontDestroyOnLoad(gameObject); //persist across scene loads
         }
     }
 
-    public void UpdateEnemyRangedNo()
+    public void StartBattle(BattleState battleState)
     {
-        var no = GameObject.Find("EnemyRangedNumber");
-        var sliderContainer = GameObject.Find("EnemyRangedSlider");
-        if (no != null && sliderContainer != null)
-        {
-            var textElements = no.GetComponent<Text>();
-            var slider = sliderContainer.GetComponent<Slider>();
-
-            if (textElements != null && slider != null)
-            {
-                textElements.text = slider.value.ToString();
-            }
-        }
-    }
-
-    public void UpdateEnemyMeleeNo()
-    {
-        var no = GameObject.Find("EnemyMeleeNumber");
-        var sliderContainer = GameObject.Find("EnemyMeleeSlider");
-        if (no != null && sliderContainer != null)
-        {
-            var textElements = no.GetComponent<Text>();
-            var slider = sliderContainer.GetComponent<Slider>();
-
-            if (textElements != null && slider != null)
-            {
-                textElements.text = slider.value.ToString();
-            }
-        }
-    }
-
-    public void UpdateHealerNo()
-    {
-        var playerNo = GameObject.Find("PlayerHealerNumber");
-        var playerSlider = GameObject.Find("PlayerHealerSlider");
-        if (playerNo != null && playerSlider != null)
-        {
-            var textElements = playerNo.GetComponent<Text>();
-            var slider = playerSlider.GetComponent<Slider>();
-
-            if (textElements != null && slider != null)
-            {
-                textElements.text = slider.value.ToString();
-            }
-        }
-    }
-
-    public void NewGame()
-    {
-        print("New game clicked");
-        SceneManager.LoadScene(1);
+        this.BattleState = battleState;
+        this.GameState = GameState.Underway;
+        this.BattleState.EnemyCharacters = battleState.EnemyMeleeCharacters + battleState.EnemyRangedCharacters;
+        this.BattleState.PlayerCharacters = battleState.PlayerMeleeCharacters + battleState.PlayerRangedCharacters + battleState.PlayerHealerCharacters;
+        SceneManager.LoadScene(2);
     }
 
     public void QuitGame()
     {
-        print("Quitting game!");
         Application.Quit();
     }
 
-    public void Cancel()
-    {        
-        print("Cancel pressed");
-        SceneManager.LoadScene(0);
-        
+    public void NewGame()
+    {
+        SceneManager.LoadScene(1);
     }
 
-    public void Ok()
+    public void AdjustScore(int amount)
     {
-        SceneManager.LoadScene(2);
-        print("Ok pressed");
+        this.BattleState.Score += amount;
+    }
+    
+    internal void BackToMainMenu()
+    {
+        GameState = GameState.Setup;
+        SceneManager.LoadScene(0);
+    }
+
+    internal void AlterPlayerCharacterCount(int v)
+    {
+        BattleState.PlayerCharacters += v;        
+    }
+    internal void AlterEnemyCharacterCount(int v)
+    {
+        BattleState.PlayerCharacters += v;
+    }
+}
+
+public class BattleState
+{
+    public int PlayerMeleeCharacters { get; set; }
+    public int PlayerRangedCharacters { get; set; }
+    public int PlayerHealerCharacters { get; set; }
+    public int EnemyMeleeCharacters { get; set; }
+    public int EnemyRangedCharacters { get; set; }
+    public int PlayerCharacters { get; set; }
+    public int EnemyCharacters { get; set; }
+    public int RoomX { get; set; }
+    public int RoomZ { get; set; }
+    public int Score { get; set; }
+}
+
+public enum GameState
+{
+    Setup, Underway, FinishedWon, FinishedLost
+}
+
+public static class FadeAudioSource
+{
+    public static IEnumerator StartFade(AudioSource audioSource, float duration, float targetVolume)
+    {        
+        float currentTime = 0;
+        float start = audioSource.volume;
+
+        while (currentTime < duration)
+        {
+            currentTime += Time.deltaTime;
+            audioSource.volume = Mathf.Lerp(start, targetVolume, currentTime / duration);
+            yield return null;
+        }
+        yield break;
     }
 }

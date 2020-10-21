@@ -18,6 +18,7 @@ public class MovementManager : MonoBehaviour
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
     [SerializeField] Material dungetonTileSelected;
     [SerializeField] Material dungetonTileSelectedAttack;
+    [SerializeField] Material dungetonTileSelectedHeal;
 #pragma warning restore 649
 
     // Start is called before the first frame update
@@ -52,6 +53,7 @@ public class MovementManager : MonoBehaviour
             var possibleMoves = GetMoves(selectionManager.selectedCharacter);
 
             Dictionary<(int, int), GameObject> possibleAttacks = new Dictionary<(int, int), GameObject>();
+            Dictionary<(int, int), GameObject> possibleHeals = new Dictionary<(int, int), GameObject>();
 
             if (selectionManager.selectedCharacter.Item2.DamageType == Assets.Scripts.Enums.DamageTypes.Physical)
             {
@@ -59,7 +61,7 @@ public class MovementManager : MonoBehaviour
             }
             else if (selectionManager.selectedCharacter.Item2.DamageType == Assets.Scripts.Enums.DamageTypes.Healing)
             {
-                possibleAttacks = combatManager.GetTargetsForAttack(selectionManager.selectedCharacter.Item2, selectionManager.selectedCharacter.Item1, selectionManager.selectedCharacter.Item2.Range, true, false);
+                possibleHeals = combatManager.GetTargetsForAttack(selectionManager.selectedCharacter.Item2, selectionManager.selectedCharacter.Item1, selectionManager.selectedCharacter.Item2.Range, true, false);
             }
             else if (selectionManager.selectedCharacter.Item2.DamageType == Assets.Scripts.Enums.DamageTypes.Magic)
             {
@@ -70,6 +72,12 @@ public class MovementManager : MonoBehaviour
             {
                 selectionManager.AddhighlightedSquare(((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material)));
                 tile.Value.GetComponent<MeshRenderer>().material = dungetonTileSelectedAttack;
+            }
+
+            foreach (var tile in possibleHeals)
+            {
+                selectionManager.AddhighlightedSquare(((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material)));
+                tile.Value.GetComponent<MeshRenderer>().material = dungetonTileSelectedHeal;
             }
 
             foreach (var tile in possibleMoves)

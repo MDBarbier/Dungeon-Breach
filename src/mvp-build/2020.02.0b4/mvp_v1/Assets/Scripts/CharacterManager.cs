@@ -12,6 +12,7 @@ public class CharacterManager : MonoBehaviour
     private Dictionary<GameObject, Character> enemyList;
     private TurnManager turnManager;
     private CombatLogHandler combatLogHandler;
+    private GamePersistenceEngine gamePersistenceEngine;
 
     // Start is called before the first frame update
     void Start()
@@ -20,6 +21,7 @@ public class CharacterManager : MonoBehaviour
         enemyList = new Dictionary<GameObject, Character>();
         playerCharacterList = new Dictionary<GameObject, Character>();
         combatLogHandler = FindObjectOfType<CombatLogHandler>();
+        gamePersistenceEngine = FindObjectOfType<GamePersistenceEngine>();
     }
 
     // Update is called once per frame
@@ -87,6 +89,7 @@ public class CharacterManager : MonoBehaviour
                 playerCharacterList.Remove(go);
                 Destroy(go);
                 turnManager.RemoveCharacterFromInitiative(target);
+                gamePersistenceEngine.AlterPlayerCharacterCount(-1);
             }
             else if (match.Value.HP > match.Value.MAXHP)
             {

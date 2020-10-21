@@ -21,6 +21,17 @@ public class DungeonManager : MonoBehaviour
     private TurnManager turnManager;
     private CombatLogHandler combatLogHandler;
     private System.Random random;
+    private GamePersistenceEngine gamePersistenceEngine;
+    private int numberOfPlayerMeleeCharacters;
+    private int numberOfPlayerHealers;
+    private int numberOfPlayerRangedCharacters;
+    private int numberOfMeleeEnemies;
+    private int numberOfRangedEnemies;
+    private int xlength;
+    private int zlength;
+    private Vector3 playerStartingPoint;
+    private Vector3 enemyStartingPoint;
+    private int numberOfFurniturePieces;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
     [SerializeField] GameObject dungetonTile;
@@ -34,24 +45,30 @@ public class DungeonManager : MonoBehaviour
     [SerializeField] Material redTeamCharacterColour2;
     [SerializeField] GameObject dungeonFurniture;
     [SerializeField] Material dungeonFurnitureMaterial;
-    [SerializeField] bool debugLogging = false;
-    [SerializeField] int xlength = 5;
-    [SerializeField] int zlength = 5;
-    [SerializeField] int numberOfPlayerMeleeCharacters;
-    [SerializeField] int numberOfPlayerHealers;
-    [SerializeField] int numberOfPlayerRangedCharacters;
-    [SerializeField] int numberOfMeleeEnemies;
-    [SerializeField] int numberOfRangedEnemies;
-    [SerializeField] Vector3 playerStartingPoint;
-    [SerializeField] Vector3 enemyStartingPoint;
-    [SerializeField] int numberOfFurniturePieces;
+    [SerializeField] bool debugLogging = false;    
 #pragma warning restore 649
 
     // Start is called before the first frame update
     void Start()
-    {
-        InitialiseObjects();
+    {   
         FindInstances();
+        LoadDataFromGamePersistenceEngine();
+        InitialiseObjects();
+    }
+
+    private void LoadDataFromGamePersistenceEngine()
+    {
+        var battleState = gamePersistenceEngine.BattleState;
+        numberOfPlayerMeleeCharacters = battleState.PlayerMeleeCharacters;
+        numberOfPlayerRangedCharacters = battleState.PlayerRangedCharacters;
+        numberOfPlayerHealers = battleState.PlayerHealerCharacters;
+        numberOfMeleeEnemies = battleState.EnemyMeleeCharacters;
+        numberOfRangedEnemies = battleState.EnemyRangedCharacters;
+        zlength = battleState.RoomZ;
+        xlength = battleState.RoomX;
+        playerStartingPoint = new Vector3(0, 0, 0);
+        enemyStartingPoint = new Vector3(xlength - 2, 0, zlength - 2);
+        numberOfFurniturePieces = (xlength + zlength / 2);
     }
 
     private void InitialiseObjects()
@@ -65,6 +82,7 @@ public class DungeonManager : MonoBehaviour
 
     private void FindInstances()
     {
+        gamePersistenceEngine = FindObjectOfType<GamePersistenceEngine>();
         turnManager = FindObjectOfType<TurnManager>();
         gridGenerator = FindObjectOfType<GridGenerator>();
         characterManager = FindObjectOfType<CharacterManager>();

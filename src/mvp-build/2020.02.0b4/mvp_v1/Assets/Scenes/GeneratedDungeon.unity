@@ -306,6 +306,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6696085739929833042, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
+      propertyPath: dungetonTileSelectedHeal
+      value: 
+      objectReference: {fileID: 2100000, guid: 44ae5b1c506e1f04fbd53b2008bac05b, type: 2}
     - target: {fileID: 6696085740250915422, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
