@@ -3,6 +3,7 @@ using Assets.Scripts.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 
@@ -13,6 +14,10 @@ public class CharacterManager : MonoBehaviour
     private TurnManager turnManager;
     private CombatLogHandler combatLogHandler;
     private GamePersistenceEngine gamePersistenceEngine;
+
+#pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
+    [SerializeField] GameObject textMesh;    
+#pragma warning restore 649
 
     // Start is called before the first frame update
     void Start()
@@ -76,6 +81,8 @@ public class CharacterManager : MonoBehaviour
 
             match.Value.HP -= damageDealt;
 
+            DisplayDamageText(damageDealt, match.Key);
+
             if (match.Value.HP <= 0)
             {
                 combatLogHandler.CombatLog($"{target.Name} is slain!");
@@ -107,6 +114,7 @@ public class CharacterManager : MonoBehaviour
             var match = enemyList.Where(a => a.Value.Name == target.Name).FirstOrDefault();
 
             match.Value.HP -= damageDealt;
+            DisplayDamageText(damageDealt, match.Key);
 
             if (match.Value.HP <= 0)
             {
@@ -125,6 +133,31 @@ public class CharacterManager : MonoBehaviour
 
         }
     }
+
+    private void DisplayDamageText(int damageDealt, GameObject target)
+    {
+        //instantiate a text mesh prefab "FloatingText"
+        var textMeshGameObject = Instantiate(textMesh, target.transform.position, Quaternion.identity);
+
+        //make it face the camera        
+        textMeshGameObject.transform.rotation = Camera.main.transform.rotation;
+
+        //Set parent
+        var parent = GameObject.Find(target.name);
+        textMeshGameObject.transform.parent = parent.transform;
+        var position = parent.transform.position;
+        position.y = position.y + 0.75f;        
+        textMeshGameObject.transform.position = position;
+        textMeshGameObject.transform.position = textMeshGameObject.transform.position + textMeshGameObject.transform.right * -0.75f;
+
+        //Set the text to the damage amount
+        var mesh = textMeshGameObject.GetComponent<TextMesh>();
+        mesh.text = $"{damageDealt} Damage";
+
+        //Set text mesh go to be destroyed after x seconds
+        var destroyAfterTime = textMeshGameObject.GetComponent<DestroyAfterTime>();
+        destroyAfterTime.Invoke(nameof(DestroyAfterTime.Destroy), 3f);
+    }    
 
     internal GameObject InstantiateCharacter(Character character, Vector3 coordinatesToCreateAt, Material material, GameObject characterPiece)
     {

@@ -95,6 +95,7 @@ public class GamePersistenceEngine : MonoBehaviour
 
     public void NewGame()
     {
+        GameState = GameState.Setup;
         SceneManager.LoadScene(1);
     }
 

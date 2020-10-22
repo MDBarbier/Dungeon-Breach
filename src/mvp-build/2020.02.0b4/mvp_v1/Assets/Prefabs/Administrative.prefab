@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a618b1f7a23c084cbaaacffee41d398, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  textMesh: {fileID: 8769066489614222361, guid: d2a09c73913d81f43b0e4c65dcc27071, type: 3}
 --- !u!1 &6696085739354917240
 GameObject:
   m_ObjectHideFlags: 0
@@ -111,8 +112,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6696085739407397879}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.0489794, y: -0.23361146, z: 0.11453867}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6696085740250915422}
@@ -174,6 +175,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectionIndicator: {fileID: 4925708292300659450, guid: e1fbb590246d89845b908f9286beac7d, type: 3}
+  debugLogging: 0
 --- !u!1 &6696085739715851561
 GameObject:
   m_ObjectHideFlags: 0
@@ -350,6 +352,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dungetonTileSelected: {fileID: 2100000, guid: b27ab452fb1bfc047a0717baaa8d50d4, type: 2}
   dungetonTileSelectedAttack: {fileID: 2100000, guid: 34e82d0592c60e948b359c4eef85aa53, type: 2}
+  dungetonTileSelectedHeal: {fileID: 0}
 --- !u!1 &6696085740250915423
 GameObject:
   m_ObjectHideFlags: 0
@@ -484,6 +487,9 @@ MonoBehaviour:
   characterPiece: {fileID: 2312313374800272004, guid: 30c099afd838b1647b7f4a2660e69a06, type: 3}
   blueTeamCharacterColour: {fileID: 2100000, guid: 9c4f483b0284d154e8a37cf2184abca3, type: 2}
   redTeamCharacterColour: {fileID: 2100000, guid: 54ca2b4f3596e5c4597f410987c7f42b, type: 2}
+  blueTeamCharacterColour2: {fileID: 2100000, guid: d7caf0c2f3819e1458bb143454a8b545, type: 2}
+  blueTeamCharacterColour3: {fileID: 2100000, guid: 186c986fd42bba54aa8b1e115ae62e00, type: 2}
+  redTeamCharacterColour2: {fileID: 2100000, guid: d297be8086930b045a546a487594ae77, type: 2}
   dungeonFurniture: {fileID: 5258238456208029294, guid: 245bf550a14be8e4fa68139d265123a2, type: 3}
   dungeonFurnitureMaterial: {fileID: 2100000, guid: 047dd8ab87205af43b19fa61343c6aaa, type: 2}
   debugLogging: 0
