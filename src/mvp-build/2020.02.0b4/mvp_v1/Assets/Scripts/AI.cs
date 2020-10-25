@@ -8,11 +8,14 @@ using UnityEngine;
 public class AI : MonoBehaviour
 {
     private TurnManager turnManager;
+    private SelectionManager selectionManager;
     private MovementManager movementManager;
     private CombatManager combatManager;
     private CharacterManager characterManager;
     private int framesBeforeActingOriginalValue;
     private CombatLogHandler combatLogHandler;
+    private Pathfinder pathfinder;
+    private bool aiProcessing;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
     [SerializeField] int framesBeforeActing = 60;
@@ -21,7 +24,10 @@ public class AI : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {        
+    {
+        aiProcessing = false;
+        pathfinder = FindObjectOfType<Pathfinder>();
+        selectionManager = FindObjectOfType<SelectionManager>();
         framesBeforeActingOriginalValue = framesBeforeActing;
         turnManager = FindObjectOfType<TurnManager>();
         movementManager = FindObjectOfType<MovementManager>();
@@ -33,11 +39,14 @@ public class AI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (turnManager.GetCharacterWhoActsNext() != null && !turnManager.GetCharacterWhoActsNext().PlayerControlled)
+        if (turnManager.GetCharacterWhoActsNext() != null 
+            && !turnManager.GetCharacterWhoActsNext().PlayerControlled
+            && !aiProcessing)
         {
             if (framesBeforeActing <= 0)
             {                
                 bool hasMoved = false;
+                aiProcessing = true;
 
                 //Get the character that should be acting
                 var characterToAct = turnManager.GetCharacterWhoActsNext();
@@ -48,7 +57,7 @@ public class AI : MonoBehaviour
                     {
                         print($"returning from AI.{nameof(this.Update)} because the characterToAct is null");
                     }
-
+                    aiProcessing = false;
                     return;
                 }
                 else
@@ -57,9 +66,12 @@ public class AI : MonoBehaviour
                     {
                         print($"AI class, method {nameof(this.Update)} processing turn for {characterToAct.Name}");
                     }
+
+                    
                 }
 
-                var charGo = characterManager.GetCharacterGameObject(characterToAct);                
+                var charGo = characterManager.GetCharacterGameObject(characterToAct);
+                selectionManager.selectedCharacter = (charGo, characterToAct);
 
                 //Get available attacks
                 var attacks = combatManager.GetTargetsForAttack(characterToAct, charGo, characterToAct.Range);
@@ -70,82 +82,38 @@ public class AI : MonoBehaviour
                 }
                 else 
                 {
-                    bool increaseXaxis = false;
-                    bool increaseZaxis = false;                    
+                    List<Vector3> path = new List<Vector3>();
 
                     //Select target
                     try
                     {
-                        var targetToApproach = combatManager.SelectTarget(characterToAct, charGo);
-                        if (debugLogging)
-                        {
-                            combatLogHandler.CombatLog($"{characterToAct.Name} is giving {targetToApproach.Item2.name} the evils!"); 
-                        }
+                        var targetToApproach = pathfinder.FindNearestEnemy(charGo.transform.localPosition);
 
-                        //compare the position of the target to current position
-                        if (targetToApproach.Item1.Item1 > charGo.transform.position.x)
+                        if (targetToApproach.Item1 == null)
                         {
-                            increaseXaxis = true;
+                            combatLogHandler.CombatLog($"{characterToAct.Name} scratches their head and looks confused...");
                         }
-
-                        if (targetToApproach.Item1.Item2 > charGo.transform.position.z)
+                        else
                         {
-                            increaseZaxis = true;
-                        }                       
+                            if (debugLogging)
+                            {
+                                combatLogHandler.CombatLog($"{characterToAct.Name} is giving {targetToApproach.Item2.Name} the evils!");
+                            }
+
+                            //find path to target
+                            path = pathfinder.Pathfind(targetToApproach.Item1.transform.localPosition, charGo.transform.localPosition, false, false);
+                            
+                            var moveToTake = (characterToAct.MA > path.Count) ? path.Count : characterToAct.MA;
+                           
+                            movementManager.MoveCharacter((charGo, characterToAct), path[moveToTake-1]);
+                            hasMoved = true;
+                        }                        
 
                     }
                     catch (Exception ex)
                     {
                         print(ex.Message);
                     }
-
-                    //Get available moves
-                    var moves = movementManager.GetMoves((charGo, characterToAct));
-
-                    //Use the calculated axis to select a legal move that's in the right direction
-                    foreach (var move in moves)
-                    {
-                        bool xMatch = false;
-                        bool zMatch = false;
-
-                        if (increaseXaxis)
-                        {
-                            if (move.Key.Item1 >= charGo.transform.position.x)
-                            {
-                                xMatch = true;
-                            } 
-                        }
-                        else
-                        {
-
-                            if (move.Key.Item1 <= charGo.transform.position.x)
-                            {
-                                xMatch = true;
-                            }
-                        }
-
-                        if (increaseZaxis)
-                        {
-                            if (move.Key.Item2 >= charGo.transform.position.z)
-                            {
-                                zMatch = true;
-                            }
-                        }
-                        else
-                        {
-
-                            if (move.Key.Item2 <= charGo.transform.position.z)
-                            {
-                                zMatch = true;
-                            }
-                        }
-
-                        if (zMatch && xMatch)
-                        {
-                            movementManager.MoveCharacter((charGo, characterToAct), ((move.Key.Item1, move.Key.Item2), move.Value));
-                            hasMoved = true;
-                        }
-                    }                    
                 }        
                 
                 if (!hasMoved)
@@ -156,7 +124,8 @@ public class AI : MonoBehaviour
                 //Update initiative
                 turnManager.UpdateInitiativeTracker(characterToAct);
 
-                framesBeforeActing = framesBeforeActingOriginalValue;                
+                framesBeforeActing = framesBeforeActingOriginalValue;
+                aiProcessing = false;
             }
             else
             {

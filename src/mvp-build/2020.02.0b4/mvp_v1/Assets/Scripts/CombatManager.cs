@@ -239,64 +239,7 @@ public class CombatManager : MonoBehaviour
     {
         targetedCharacters.Clear();
         targetedCharacters = new List<(Character ch, GameObject cgo, GameObject sq, Character attacker)>();
-    }
-
-    /// <summary>
-    /// Selects a target for the AI
-    /// </summary>
-    /// <param name="attacker">The attacker's character instance</param>
-    /// <param name="gameObject">The attacker's game object</param>
-    /// <returns></returns>
-    internal ((int, int), GameObject) SelectTarget(Character attacker, GameObject gameObject)
-    {
-        var currentX = gameObject.transform.position.x;
-        var currentZ = gameObject.transform.position.z;
-        var dungeonGrid = dungeonManager.GetDungeonGrid();
-        var furnitureArray = dungeonManager.GetFurnitureArray();
-        Dictionary<(int, int), GameObject> possibleAttacks = new Dictionary<(int, int), GameObject>();
-
-        //via dungeon manager find the game objects for the 4 squares around the current square (if they exist)
-        List<KeyValuePair<(int, int), GameObject>> listToCheck = new List<KeyValuePair<(int, int), GameObject>>();
-
-        //todo :BUG:low: fix this loop so that it correctly looks at where character is and works out concentrically
-        for (int i = 0; i < dungeonGrid.Count; i++)
-        {
-            listToCheck.Add(dungeonGrid.Where(a => a.Key == (currentX + i, currentZ)).FirstOrDefault());
-            listToCheck.Add(dungeonGrid.Where(a => a.Key == (currentX - i, currentZ)).FirstOrDefault());
-            listToCheck.Add(dungeonGrid.Where(a => a.Key == (currentX, currentZ + i)).FirstOrDefault());
-            listToCheck.Add(dungeonGrid.Where(a => a.Key == (currentX, currentZ - i)).FirstOrDefault());
-            listToCheck.Add(dungeonGrid.Where(a => a.Key == (currentX + i, currentZ + i)).FirstOrDefault());
-            listToCheck.Add(dungeonGrid.Where(a => a.Key == (currentX + i, currentZ - i)).FirstOrDefault());
-            listToCheck.Add(dungeonGrid.Where(a => a.Key == (currentX - i, currentZ + i)).FirstOrDefault());
-            listToCheck.Add(dungeonGrid.Where(a => a.Key == (currentX - i, currentZ - i)).FirstOrDefault());
-
-            foreach (var squareToCheck in listToCheck)
-            {
-                if (squareToCheck.Value == null)
-                {
-                    continue;
-                }
-
-                var result = CheckSquareForPossibleAttack(squareToCheck);
-
-                if (result)
-                {
-                    //Get the character gameobject in the square to attack
-                    var characterToAttack = characterManager.GetCharacterAtPosition(squareToCheck.Key.Item1, squareToCheck.Key.Item2);
-                    if (characterToAttack.Item2 != null)
-                    {
-                        //Is the potential target a character on the same side?
-                        if (characterToAttack.Item2.PlayerControlled != attacker.PlayerControlled)
-                        {
-                            return ((squareToCheck.Key.Item1, squareToCheck.Key.Item1), characterToAttack.Item1);
-                        }
-                    }
-                }
-            }
-        }
-
-        throw new Exception($"{attacker.Name} scratches their head and looks confused...");
-    }
+    }    
 
     private bool CheckSquareForPossibleAttack(KeyValuePair<(int, int), GameObject> squareToCheck)
     {

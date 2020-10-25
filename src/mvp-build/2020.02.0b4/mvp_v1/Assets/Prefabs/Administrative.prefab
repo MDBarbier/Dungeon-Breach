@@ -353,6 +353,7 @@ MonoBehaviour:
   dungetonTileSelected: {fileID: 2100000, guid: b27ab452fb1bfc047a0717baaa8d50d4, type: 2}
   dungetonTileSelectedAttack: {fileID: 2100000, guid: 34e82d0592c60e948b359c4eef85aa53, type: 2}
   dungetonTileSelectedHeal: {fileID: 0}
+  debugLogging: 0
 --- !u!1 &6696085740250915423
 GameObject:
   m_ObjectHideFlags: 0
@@ -390,6 +391,7 @@ Transform:
   - {fileID: 6696085739749023321}
   - {fileID: 6696085740291338760}
   - {fileID: 6696085739715851560}
+  - {fileID: 8608228179788879615}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -493,3 +495,47 @@ MonoBehaviour:
   dungeonFurniture: {fileID: 5258238456208029294, guid: 245bf550a14be8e4fa68139d265123a2, type: 3}
   dungeonFurnitureMaterial: {fileID: 2100000, guid: 047dd8ab87205af43b19fa61343c6aaa, type: 2}
   debugLogging: 0
+--- !u!1 &6767811204179042607
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8608228179788879615}
+  - component: {fileID: 7836417021813507629}
+  m_Layer: 0
+  m_Name: Pathfinder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8608228179788879615
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6767811204179042607}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6696085740250915422}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7836417021813507629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6767811204179042607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5ea039798ea1cd4098e3782ce57b7c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  highlightedSquare: {fileID: 2100000, guid: 44ae5b1c506e1f04fbd53b2008bac05b, type: 2}

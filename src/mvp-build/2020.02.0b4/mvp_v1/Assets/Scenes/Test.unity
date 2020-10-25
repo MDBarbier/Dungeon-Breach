@@ -320,7 +320,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 44ae5b1c506e1f04fbd53b2008bac05b, type: 2}
     - target: {fileID: 6696085739929833042, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
       propertyPath: debugLogging
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6696085740250915422, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -420,6 +420,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
       propertyPath: numberOfPlayerHealers
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6696085740787273289, guid: d2f77937abd950645a60dfbf8730d4b6, type: 3}
+      propertyPath: overridePersistence
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

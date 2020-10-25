@@ -11,7 +11,7 @@ public class MovementManager : MonoBehaviour
     private DungeonManager dungeonManager;
     private CharacterManager characterManager;
     private SelectionManager selectionManager;
-    private CombatManager combatManager;    
+    private CombatManager combatManager;
     private GameObject lastSelectedGameObject;
     private TurnManager turnManager;
 
@@ -24,10 +24,10 @@ public class MovementManager : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {        
+    {
         dungeonManager = FindObjectOfType<DungeonManager>();
         characterManager = FindObjectOfType<CharacterManager>();
-        selectionManager = FindObjectOfType<SelectionManager>();        
+        selectionManager = FindObjectOfType<SelectionManager>();
         turnManager = FindObjectOfType<TurnManager>();
         combatManager = FindObjectOfType<CombatManager>();
     }
@@ -35,69 +35,66 @@ public class MovementManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //todo :refactor: this update logic into Player character manager
+        //todo refactor this update logic into Player character manager
         if (selectionManager.selectedCharacter.Item1 != null)
         {
             if (lastSelectedGameObject == selectionManager.selectedCharacter.Item1)
-            {                
-                return; //only continue if the selection has changed
-            }
-
-            //return highlighted tiles to their normal state
-            foreach (var tile in selectionManager.GetHighlightedTiles())
             {
-                if (debugLogging) print("Resetting highlighted tiles");
-                tile.Value.Item1.GetComponent<MeshRenderer>().material = tile.Value.Item2;
+                return;
             }
 
-            selectionManager.ResetHighlightedTiles(); //todo - is this doubling up?
+            selectionManager.ResetHighlightedTiles();
 
             if (debugLogging) print($"Getting possible moves for {selectionManager.selectedCharacter.Item1.name}");
+
             var possibleMoves = GetMoves(selectionManager.selectedCharacter);
 
             Dictionary<(int, int), GameObject> possibleAttacks = new Dictionary<(int, int), GameObject>();
             Dictionary<(int, int), GameObject> possibleHeals = new Dictionary<(int, int), GameObject>();
 
-            if (selectionManager.selectedCharacter.Item2.DamageType == Assets.Scripts.Enums.DamageTypes.Physical)
+            if (selectionManager.selectedCharacter.Item2.PlayerControlled)
             {
-                if (debugLogging) print($"Getting possible physical attacks for {selectionManager.selectedCharacter.Item1.name}");
-                possibleAttacks = combatManager.GetTargetsForAttack(selectionManager.selectedCharacter.Item2, selectionManager.selectedCharacter.Item1, selectionManager.selectedCharacter.Item2.Range); 
-            }
-            else if (selectionManager.selectedCharacter.Item2.DamageType == Assets.Scripts.Enums.DamageTypes.Healing)
-            {
-                if (debugLogging) print($"Getting possible heals for {selectionManager.selectedCharacter.Item1.name}");
-                possibleHeals = combatManager.GetTargetsForAttack(selectionManager.selectedCharacter.Item2, selectionManager.selectedCharacter.Item1, selectionManager.selectedCharacter.Item2.Range, true, false);
-            }
-            else if (selectionManager.selectedCharacter.Item2.DamageType == Assets.Scripts.Enums.DamageTypes.Magic)
-            {
-                if (debugLogging) print($"Getting possible magic attacks for {selectionManager.selectedCharacter.Item1.name}");
-                possibleAttacks = combatManager.GetTargetsForAttack(selectionManager.selectedCharacter.Item2, selectionManager.selectedCharacter.Item1, selectionManager.selectedCharacter.Item2.Range, true, true);
-            }
+                if (selectionManager.selectedCharacter.Item2.DamageType == Assets.Scripts.Enums.DamageTypes.Physical)
+                {
+                    if (debugLogging) print($"Getting possible physical attacks for {selectionManager.selectedCharacter.Item1.name}");
+                    possibleAttacks = combatManager.GetTargetsForAttack(selectionManager.selectedCharacter.Item2, selectionManager.selectedCharacter.Item1, selectionManager.selectedCharacter.Item2.Range);
+                }
+                else if (selectionManager.selectedCharacter.Item2.DamageType == Assets.Scripts.Enums.DamageTypes.Healing)
+                {
+                    if (debugLogging) print($"Getting possible heals for {selectionManager.selectedCharacter.Item1.name}");
+                    possibleHeals = combatManager.GetTargetsForAttack(selectionManager.selectedCharacter.Item2, selectionManager.selectedCharacter.Item1, selectionManager.selectedCharacter.Item2.Range, true, false);
+                }
+                else if (selectionManager.selectedCharacter.Item2.DamageType == Assets.Scripts.Enums.DamageTypes.Magic)
+                {
+                    if (debugLogging) print($"Getting possible magic attacks for {selectionManager.selectedCharacter.Item1.name}");
+                    possibleAttacks = combatManager.GetTargetsForAttack(selectionManager.selectedCharacter.Item2, selectionManager.selectedCharacter.Item1, selectionManager.selectedCharacter.Item2.Range, true, true);
+                }
 
-            foreach (var tile in possibleAttacks)
-            {
-                if (debugLogging) print($"highlighting possible attacks for {selectionManager.selectedCharacter.Item1.name}");
-                selectionManager.AddhighlightedSquare(((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material)));
-                tile.Value.GetComponent<MeshRenderer>().material = dungetonTileSelectedAttack;
-            }
+                foreach (var tile in possibleAttacks)
+                {
+                    if (debugLogging) print($"highlighting possible attacks for {selectionManager.selectedCharacter.Item1.name}");
+                    selectionManager.AddhighlightedSquare(((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material)));
+                    tile.Value.GetComponent<MeshRenderer>().material = dungetonTileSelectedAttack;
+                }
 
-            foreach (var tile in possibleHeals)
-            {
-                if (debugLogging) print($"highlighting possible heals for {selectionManager.selectedCharacter.Item1.name}");
-                selectionManager.AddhighlightedSquare(((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material)));
-                tile.Value.GetComponent<MeshRenderer>().material = dungetonTileSelectedHeal;
-            }
+                foreach (var tile in possibleHeals)
+                {
+                    if (debugLogging) print($"highlighting possible heals for {selectionManager.selectedCharacter.Item1.name}");
+                    selectionManager.AddhighlightedSquare(((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material)));
+                    tile.Value.GetComponent<MeshRenderer>().material = dungetonTileSelectedHeal;
+                }
 
-            foreach (var tile in possibleMoves)
-            {
-                if (debugLogging) print($"highlighting possible moves for {selectionManager.selectedCharacter.Item1.name}");
-                selectionManager.AddhighlightedSquare(((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material)));
-                tile.Value.GetComponent<MeshRenderer>().material = dungetonTileSelected;
+                foreach (var tile in possibleMoves)
+                {
+                    if (debugLogging) print($"highlighting possible moves for {selectionManager.selectedCharacter.Item1.name}");
+                    selectionManager.AddhighlightedSquare(((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material)));
+                    tile.Value.GetComponent<MeshRenderer>().material = dungetonTileSelected;
+                } 
             }
 
             //assign the gameobject we just processed to the last game object flag
             if (debugLogging) print($"assign last selected game object for {selectionManager.selectedCharacter.Item1.name}");
-            lastSelectedGameObject = selectionManager.selectedCharacter.Item1;
+            lastSelectedGameObject = selectionManager.selectedCharacter.Item1;            
         }
         else
         {
@@ -122,12 +119,34 @@ public class MovementManager : MonoBehaviour
 
         //Remove selections
         if (debugLogging) print($"Removing selections and highlighted tiles");
+        
+        selectionManager.RemoveSelections();
+        selectionManager.ResetHighlightedTiles();
+    }
+
+    internal void MoveCharacter(ValueTuple<GameObject, Character> theCharacter, Vector3 squareToMoveTo)
+    {
+        //Perform the physical move of the gameobject
+        if (debugLogging) print($"Perform the physical move of the gameobject for {theCharacter.Item1.name}");
+        theCharacter.Item1.transform.localPosition = new Vector3(squareToMoveTo.x, theCharacter.Item1.transform.position.y, squareToMoveTo.z);
+
+        //Report the change back to the character controller
+        if (debugLogging) print($"Report the change back to the character controller for {theCharacter.Item1.name}");
+        characterManager.UpdateCharacterPosition(theCharacter);
+
+        //Tell turn controller to update initiative for this character
+        if (debugLogging) print($"Tell turn controller to update initiative for this character for {theCharacter.Item2.Name}");
+        turnManager.UpdateInitiativeTracker(theCharacter.Item2);
+
+        //Remove selections
+        if (debugLogging) print($"Removing selections and highlighted tiles");
         selectionManager.RemoveSelections();
         selectionManager.ResetHighlightedTiles();
     }
 
     internal Dictionary<(int, int), GameObject> GetMoves(ValueTuple<GameObject, Character> theCharacter)
     {
+        //todo write version of pathfinder that gets all legal moves up to MA away
         int movementAllowance = theCharacter.Item2.MA;
         var currentX = theCharacter.Item1.transform.position.x;
         var currentZ = theCharacter.Item1.transform.position.z;
@@ -145,7 +164,7 @@ public class MovementManager : MonoBehaviour
 
         if (result.Item2 != null)
         {
-            possibleMoves.Add((result.Item1.Item1, result.Item1.Item2), result.Item2); 
+            possibleMoves.Add((result.Item1.Item1, result.Item1.Item2), result.Item2);
         }
 
         result = CheckSquareForPossibleMove(furnitureArray, possibleMoves, lowerSquare);

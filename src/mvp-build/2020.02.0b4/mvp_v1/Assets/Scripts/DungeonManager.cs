@@ -45,7 +45,8 @@ public class DungeonManager : MonoBehaviour
     [SerializeField] Material redTeamCharacterColour2;
     [SerializeField] GameObject dungeonFurniture;
     [SerializeField] Material dungeonFurnitureMaterial;
-    [SerializeField] bool debugLogging = false;    
+    [SerializeField] bool debugLogging = false;
+    [SerializeField] bool overridePersistence = false;
 #pragma warning restore 649
 
     // Start is called before the first frame update
@@ -58,17 +59,44 @@ public class DungeonManager : MonoBehaviour
 
     private void LoadDataFromGamePersistenceEngine()
     {
-        var battleState = gamePersistenceEngine.BattleState;
-        numberOfPlayerMeleeCharacters = battleState.PlayerMeleeCharacters;
-        numberOfPlayerRangedCharacters = battleState.PlayerRangedCharacters;
-        numberOfPlayerHealers = battleState.PlayerHealerCharacters;
-        numberOfMeleeEnemies = battleState.EnemyMeleeCharacters;
-        numberOfRangedEnemies = battleState.EnemyRangedCharacters;
-        zlength = battleState.RoomZ;
-        xlength = battleState.RoomX;
-        playerStartingPoint = new Vector3(0, 0, 0);
-        enemyStartingPoint = new Vector3(xlength - 2, 0, zlength - 2);
-        numberOfFurniturePieces = (xlength + zlength / 2);
+        if (!overridePersistence)
+        {
+            var battleState = gamePersistenceEngine.BattleState;
+            numberOfPlayerMeleeCharacters = battleState.PlayerMeleeCharacters;
+            numberOfPlayerRangedCharacters = battleState.PlayerRangedCharacters;
+            numberOfPlayerHealers = battleState.PlayerHealerCharacters;
+            numberOfMeleeEnemies = battleState.EnemyMeleeCharacters;
+            numberOfRangedEnemies = battleState.EnemyRangedCharacters;
+            zlength = battleState.RoomZ;
+            xlength = battleState.RoomX;
+            playerStartingPoint = new Vector3(0, 0, 0);
+            enemyStartingPoint = new Vector3(xlength - 2, 0, zlength - 2);
+            numberOfFurniturePieces = (xlength + zlength / 2);
+        }
+        else
+        {
+            var battleState = new BattleState()
+            {
+                EnemyMeleeCharacters = 1,
+                EnemyRangedCharacters = 0,
+                PlayerMeleeCharacters = 1,
+                PlayerHealerCharacters = 0,
+                PlayerRangedCharacters = 0,                
+                RoomX = 10,
+                RoomZ = 10                
+            };
+
+            numberOfPlayerMeleeCharacters = battleState.PlayerMeleeCharacters;
+            numberOfPlayerRangedCharacters = battleState.PlayerRangedCharacters;
+            numberOfPlayerHealers = battleState.PlayerHealerCharacters;
+            numberOfMeleeEnemies = battleState.EnemyMeleeCharacters;
+            numberOfRangedEnemies = battleState.EnemyRangedCharacters;
+            zlength = battleState.RoomZ;
+            xlength = battleState.RoomX;
+            playerStartingPoint = new Vector3(0, 0, 0);
+            enemyStartingPoint = new Vector3(xlength - 2, 0, zlength - 2);
+            numberOfFurniturePieces = 12;
+        }
     }
 
     private void InitialiseObjects()
