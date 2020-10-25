@@ -4,7 +4,7 @@ using UnityEngine;
 public class ControlManager : MonoBehaviour
 {
     private Camera mainCamera;
-    internal GameObject clickDetectedOn;
+    private GameObject clickDetectedOn;
     internal GameObject hoverDetectedOn;
     private bool SpaceBarDetected;
 
@@ -76,5 +76,12 @@ public class ControlManager : MonoBehaviour
         SpaceBarDetected = false;
     }
 
+    internal void ClearClickDetectedOn()
+    {
+        clickDetectedOn = null;
+    }
+
     internal bool GetSpacebarDetected() => SpaceBarDetected;
+
+    internal GameObject GetClickDetectedOn() => clickDetectedOn;
 }

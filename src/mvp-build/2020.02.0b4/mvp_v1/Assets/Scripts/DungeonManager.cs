@@ -150,7 +150,7 @@ public class DungeonManager : MonoBehaviour
             for (int i = 0; i < numberOfPlayerRangedCharacters; i++)
             {
                 var newChar = new RangedCharacter();
-                newChar.Race = Races.Human;
+                newChar.Race = Races.Human;                
                 newChar.PlayerControlled = true;
                 newChar.SetRandomName(random, characterManager.GetAllCharacters());
                 newChar.Subclass = Subclasses.Archer;
@@ -161,10 +161,10 @@ public class DungeonManager : MonoBehaviour
             for (int i = 0; i < numberOfPlayerMeleeCharacters; i++)
             {
                 var newChar = new MeleeCharacter();
-                newChar.Race = Assets.Scripts.Enums.Races.Human;
+                newChar.Race = Races.Human;                
                 newChar.PlayerControlled = true;
                 newChar.SetRandomName(random, characterManager.GetAllCharacters());
-                newChar.Subclass = Assets.Scripts.Enums.Subclasses.Fighter;
+                newChar.Subclass = Subclasses.Fighter;
                 var spaceToInstantiate = FindSpaceToInstantiate(playerStartingPoint);
                 characterManager.InstantiateCharacter(newChar, new Vector3(spaceToInstantiate.x, 0.75f, spaceToInstantiate.z), blueTeamCharacterColour, characterPiece);
             }
@@ -172,9 +172,9 @@ public class DungeonManager : MonoBehaviour
             for (int i = 0; i < numberOfRangedEnemies; i++)
             {
                 var newChar = new RangedCharacter();
-                newChar.Race = Assets.Scripts.Enums.Races.Orc;
+                newChar.Race = Races.Orc;
                 newChar.SetRandomName(random, characterManager.GetAllCharacters());
-                newChar.Subclass = Assets.Scripts.Enums.Subclasses.Bandit;
+                newChar.Subclass = Subclasses.Bandit;
                 var spaceToInstantiate = FindSpaceToInstantiate(enemyStartingPoint);
                 characterManager.InstantiateCharacter(newChar, new Vector3(spaceToInstantiate.x, 0.75f, spaceToInstantiate.z), redTeamCharacterColour2, characterPiece);
             }
@@ -182,9 +182,9 @@ public class DungeonManager : MonoBehaviour
             for (int i = 0; i < numberOfMeleeEnemies; i++)
             {                
                 var newChar = new MeleeCharacter();
-                newChar.Race = Assets.Scripts.Enums.Races.Orc;                
+                newChar.Race = Races.Orc;                
                 newChar.SetRandomName(random, characterManager.GetAllCharacters());
-                newChar.Subclass = Assets.Scripts.Enums.Subclasses.Bandit;
+                newChar.Subclass = Subclasses.Bandit;
                 var spaceToInstantiate = FindSpaceToInstantiate(enemyStartingPoint);
                 characterManager.InstantiateCharacter(newChar, new Vector3(spaceToInstantiate.x, 0.75f, spaceToInstantiate.z), redTeamCharacterColour, characterPiece);
             }

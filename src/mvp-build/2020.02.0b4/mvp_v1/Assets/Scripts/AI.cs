@@ -51,6 +51,13 @@ public class AI : MonoBehaviour
 
                     return;
                 }
+                else
+                {
+                    if (debugLogging)
+                    {
+                        print($"AI class, method {nameof(this.Update)} processing turn for {characterToAct.Name}");
+                    }
+                }
 
                 var charGo = characterManager.GetCharacterGameObject(characterToAct);                
 

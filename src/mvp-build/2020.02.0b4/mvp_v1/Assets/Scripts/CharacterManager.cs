@@ -47,11 +47,16 @@ public class CharacterManager : MonoBehaviour
 
     internal (GameObject, Character) GetPlayerCharacter(string gameObjectName)
     {
-        var goMatch = playerCharacterList.Where(c => c.Key.name == gameObjectName).Select(c => c).FirstOrDefault();
+        var goMatch = playerCharacterList.Where(c => c.Key.name == gameObjectName).Select(c => c).ToList();
 
-        if (goMatch.Key != null)
+        if (goMatch.Count >1)
         {
-            return (goMatch.Key, goMatch.Value);
+            throw new Exception("Non uniquely named characters detected");
+        }
+
+        if (goMatch.First().Key != null)
+        {
+            return (goMatch.First().Key, goMatch.First().Value);
         }
         else
         {

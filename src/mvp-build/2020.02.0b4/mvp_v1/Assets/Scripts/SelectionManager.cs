@@ -10,9 +10,9 @@ public class SelectionManager : MonoBehaviour
     private GameObject lastSelected;
     private GameObject selectionRing;
     private MovementManager movementManager;
+    private DungeonManager dungeonManager;
     private TurnManager turnManager;
-    private Dictionary<(int, int), (GameObject, Material)> highlightedTiles;
-
+    private Dictionary<(int, int), (GameObject, Material)> highlightedTiles;    
     public (GameObject, Character) selectedCharacter;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
@@ -22,10 +22,11 @@ public class SelectionManager : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {   
+    {     
         movementManager = FindObjectOfType<MovementManager>();
         characterManager = FindObjectOfType<CharacterManager>();
         controlManager = FindObjectOfType<ControlManager>();
+        dungeonManager = FindObjectOfType<DungeonManager>();
         turnManager = FindObjectOfType<TurnManager>();
         characterController = FindObjectOfType<CharacterController>();
         ResetHighlightedTiles();
@@ -35,31 +36,60 @@ public class SelectionManager : MonoBehaviour
     void Update()
     {
         AddSelectionIfPlayerCharacterNext();
+        var clickDetectedOn = controlManager.GetClickDetectedOn();
 
         //If no click detected end here
-        if (controlManager.clickDetectedOn == null)
+        if (clickDetectedOn == null)
         {
             return;
         }
 
         //Handle any click events
-        switch (controlManager.clickDetectedOn.tag)
+        switch (clickDetectedOn.tag)
         {
             case "Character":
 
                 //Is the clicked on character the target of an attack?
-                characterController.HandleCharacterClick(controlManager.clickDetectedOn);
+                characterController.HandleCharacterClick(clickDetectedOn);
 
                 break;
 
-            case "Floor":
+            case "Floor":                
+                
+                var highlightedTiles = GetHighlightedTiles();                
 
                 //Check whether this tile is in the list of highlighted tiles for the currently selected unit
-                foreach (var tile in GetHighlightedTiles())
+                foreach (var tile in highlightedTiles)
                 {
-                    if (tile.Key.Item1 == controlManager.clickDetectedOn.transform.position.x && tile.Key.Item2 == controlManager.clickDetectedOn.transform.position.z)
+                    //Check that the square matches the one clicked on or not
+                    if (tile.Key.Item1 == clickDetectedOn.transform.position.x && tile.Key.Item2 == clickDetectedOn.transform.position.z)
                     {
+                        //Check there is no other character in the square
+                        if (characterManager.GetCharacterAtPosition(tile.Key.Item1, tile.Key.Item2).Item1 != null)
+                        {
+                            break;
+                        }
+
+                        //Check there is no furniture in the square
+                        var furniture = dungeonManager.GetFurnitureArray();
+                        try
+                        {
+                            var pieceOfFurniture = furniture[tile.Key.Item1][tile.Key.Item2];
+
+                            if (pieceOfFurniture != null)
+                            {
+                                break;
+                            }
+                        }
+                        catch (System.Exception)
+                        {
+                            //No furniture                            
+                        }
+
+                        //If nothing in the square then move the character there
+                        if (debugLogging) print($"Invoking {nameof(movementManager.MoveCharacter)} on {selectedCharacter.Item1.name} in response to a click");
                         movementManager.MoveCharacter(selectedCharacter, ((tile.Key.Item1, tile.Key.Item2), tile.Value.Item1));
+                        controlManager.ClearClickDetectedOn();
                         break;
                     }
                 }
@@ -149,7 +179,7 @@ public class SelectionManager : MonoBehaviour
             highlightedTiles.Clear();
         }        
 
-        highlightedTiles = new Dictionary<(int, int), (GameObject, Material)>();
+        highlightedTiles = new Dictionary<(int, int), (GameObject, Material)>();          
     }
 
     internal Dictionary<(int, int), (GameObject, Material)> GetHighlightedTiles()

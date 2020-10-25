@@ -57,7 +57,7 @@ public class CharacterController : MonoBehaviour
             }
         }
 
-        controlManager.clickDetectedOn = null;
+        controlManager.ClearClickDetectedOn();
     }
 
     private void EndOfTurnAdmin(Character c)
