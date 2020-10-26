@@ -12,7 +12,7 @@ public class SelectionManager : MonoBehaviour
     private MovementManager movementManager;
     private DungeonManager dungeonManager;
     private TurnManager turnManager;
-    private Dictionary<(int, int), (GameObject, Material)> highlightedTiles;    
+    private Dictionary<(int, int), (GameObject, Material)> highlightedObjects;    
     public (GameObject, Character) selectedCharacter;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
@@ -56,7 +56,7 @@ public class SelectionManager : MonoBehaviour
 
             case "Floor":                
                 
-                var highlightedTiles = GetHighlightedTiles();                
+                var highlightedTiles = GetHighlightedObjects();                
 
                 //Check whether this tile is in the list of highlighted tiles for the currently selected unit
                 foreach (var tile in highlightedTiles)
@@ -169,36 +169,40 @@ public class SelectionManager : MonoBehaviour
 
     internal void ResetHighlightedTiles()
     {
-        if (highlightedTiles != null)
+        if (highlightedObjects != null)
         {
-            foreach (var tile in GetHighlightedTiles())
+            foreach (var tile in GetHighlightedObjects())
             {
                 tile.Value.Item1.GetComponent<MeshRenderer>().material = tile.Value.Item2;
             }
 
-            highlightedTiles.Clear();
+            highlightedObjects.Clear();
         }        
 
-        highlightedTiles = new Dictionary<(int, int), (GameObject, Material)>();          
+        highlightedObjects = new Dictionary<(int, int), (GameObject, Material)>();          
     }
 
-    internal Dictionary<(int, int), (GameObject, Material)> GetHighlightedTiles()
+    internal Dictionary<(int, int), (GameObject, Material)> GetHighlightedObjects()
     {
-        if (highlightedTiles == null)
+        if (highlightedObjects == null)
         {
             return new Dictionary<(int, int), (GameObject, Material)>();
         }
         else
         {
-            return highlightedTiles;
+            return highlightedObjects;
         }
     }
 
-    internal void AddhighlightedSquare(((int, int), (GameObject, Material)) theHighlightedTile)
+    internal void AddhighlightedObject(((int, int), (GameObject, Material)) theHighlightedObject)
     {
-        if (!highlightedTiles.ContainsKey(theHighlightedTile.Item1))
+        if (!highlightedObjects.ContainsKey(theHighlightedObject.Item1))
         {
-            this.highlightedTiles.Add(theHighlightedTile.Item1, theHighlightedTile.Item2); 
+            this.highlightedObjects.Add(theHighlightedObject.Item1, theHighlightedObject.Item2); 
+        }
+        else
+        {
+            print($"Failed to add to highlighted object list: {theHighlightedObject.Item1.Item1}, {theHighlightedObject.Item1.Item1} - {theHighlightedObject.Item2.Item1.name}");
         }
     }
 }

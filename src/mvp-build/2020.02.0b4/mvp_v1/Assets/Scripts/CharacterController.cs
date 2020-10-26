@@ -52,8 +52,7 @@ public class CharacterController : MonoBehaviour
                     combatManager.PerformAttack(c.attacker, c.ch);
                     EndOfTurnAdmin(c.attacker);
                     break;
-                }
-
+                }                
             }
         }
 

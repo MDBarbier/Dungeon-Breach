@@ -58,18 +58,19 @@ public class MovementManager : MonoBehaviour
 
             if (selectionManager.selectedCharacter.Item2.PlayerControlled)
             {
-                var possibleMoves2 = pathfinder.GetPlayerMoveArea(selectionManager.selectedCharacter.Item1.transform.localPosition);
+                var possibleMoves = pathfinder.GetPlayerMoveArea(selectionManager.selectedCharacter.Item1.transform.localPosition);
                 if (debugLogging) print($"highlighting possible moves for {selectionManager.selectedCharacter.Item1.name}");
 
-                foreach (var move in possibleMoves2)
+                foreach (var move in possibleMoves)
                 {
-                    if (move.Value.Item2 > selectionManager.selectedCharacter.Item2.MA)
+                    if (move.Value.Item2 > selectionManager.selectedCharacter.Item2.MA || 
+                        characterManager.GetCharacterAtPosition((int)move.Key.x, (int)move.Key.z).Item1 != null)
                     {
                         continue;
                     }
                     
                     var tile = dungeonManager.GetFloorTileByLocation(move.Key.x, move.Key.z);
-                    selectionManager.AddhighlightedSquare((((int)move.Key.x, (int)move.Key.z), (tile, tile.GetComponent<MeshRenderer>().material)));
+                    selectionManager.AddhighlightedObject((((int)move.Key.x, (int)move.Key.z), (tile, tile.GetComponent<MeshRenderer>().material)));
                     tile.GetComponent<MeshRenderer>().material = dungetonTileSelected;
                 }
 
@@ -92,14 +93,14 @@ public class MovementManager : MonoBehaviour
                 foreach (var tile in possibleAttacks)
                 {
                     if (debugLogging) print($"highlighting possible attacks for {selectionManager.selectedCharacter.Item1.name}");
-                    selectionManager.AddhighlightedSquare(((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material)));
+                    selectionManager.AddhighlightedObject(((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material)));
                     tile.Value.GetComponent<MeshRenderer>().material = dungetonTileSelectedAttack;
                 }
 
                 foreach (var tile in possibleHeals)
                 {
                     if (debugLogging) print($"highlighting possible heals for {selectionManager.selectedCharacter.Item1.name}");
-                    selectionManager.AddhighlightedSquare(((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material)));
+                    selectionManager.AddhighlightedObject(((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material)));
                     tile.Value.GetComponent<MeshRenderer>().material = dungetonTileSelectedHeal;
                 }
             }            
