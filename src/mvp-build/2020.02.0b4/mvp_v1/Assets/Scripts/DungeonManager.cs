@@ -327,4 +327,25 @@ public class DungeonManager : MonoBehaviour
         return furniturePositions;
     }
 
+    internal bool IsObstacleInSpace(Vector3 space)
+    {
+        try
+        {
+            if (furniturePositions[(int)space.x][(int)space.z] != null)
+            {
+                return true;
+            }
+            else { return false; }
+        }
+        catch (System.Exception)
+        {
+            return false;
+        }
+    }
+
+    internal GameObject GetFloorTileByLocation(float x, float z)
+    {
+        return gridPositions.Where(a => a.Key.Item1 == x && a.Key.Item2 == z).FirstOrDefault().Value;
+    }
+
 }

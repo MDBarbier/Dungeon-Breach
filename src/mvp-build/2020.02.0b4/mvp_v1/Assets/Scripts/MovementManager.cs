@@ -14,6 +14,7 @@ public class MovementManager : MonoBehaviour
     private CombatManager combatManager;
     private GameObject lastSelectedGameObject;
     private TurnManager turnManager;
+    private Pathfinder pathfinder;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
     [SerializeField] Material dungetonTileSelected;
@@ -25,6 +26,7 @@ public class MovementManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        pathfinder = FindObjectOfType<Pathfinder>();
         dungeonManager = FindObjectOfType<DungeonManager>();
         characterManager = FindObjectOfType<CharacterManager>();
         selectionManager = FindObjectOfType<SelectionManager>();
@@ -43,17 +45,34 @@ public class MovementManager : MonoBehaviour
                 return;
             }
 
+            //assign the gameobject we just processed to the last game object flag
+            if (debugLogging) print($"assign last selected game object for {selectionManager.selectedCharacter.Item1.name}");
+            lastSelectedGameObject = selectionManager.selectedCharacter.Item1;
+
             selectionManager.ResetHighlightedTiles();
 
             if (debugLogging) print($"Getting possible moves for {selectionManager.selectedCharacter.Item1.name}");
-
-            var possibleMoves = GetMoves(selectionManager.selectedCharacter);
 
             Dictionary<(int, int), GameObject> possibleAttacks = new Dictionary<(int, int), GameObject>();
             Dictionary<(int, int), GameObject> possibleHeals = new Dictionary<(int, int), GameObject>();
 
             if (selectionManager.selectedCharacter.Item2.PlayerControlled)
             {
+                var possibleMoves2 = pathfinder.GetPlayerMoveArea(selectionManager.selectedCharacter.Item1.transform.localPosition);
+                if (debugLogging) print($"highlighting possible moves for {selectionManager.selectedCharacter.Item1.name}");
+
+                foreach (var move in possibleMoves2)
+                {
+                    if (move.Value.Item2 > selectionManager.selectedCharacter.Item2.MA)
+                    {
+                        continue;
+                    }
+                    
+                    var tile = dungeonManager.GetFloorTileByLocation(move.Key.x, move.Key.z);
+                    selectionManager.AddhighlightedSquare((((int)move.Key.x, (int)move.Key.z), (tile, tile.GetComponent<MeshRenderer>().material)));
+                    tile.GetComponent<MeshRenderer>().material = dungetonTileSelected;
+                }
+
                 if (selectionManager.selectedCharacter.Item2.DamageType == Assets.Scripts.Enums.DamageTypes.Physical)
                 {
                     if (debugLogging) print($"Getting possible physical attacks for {selectionManager.selectedCharacter.Item1.name}");
@@ -83,18 +102,7 @@ public class MovementManager : MonoBehaviour
                     selectionManager.AddhighlightedSquare(((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material)));
                     tile.Value.GetComponent<MeshRenderer>().material = dungetonTileSelectedHeal;
                 }
-
-                foreach (var tile in possibleMoves)
-                {
-                    if (debugLogging) print($"highlighting possible moves for {selectionManager.selectedCharacter.Item1.name}");
-                    selectionManager.AddhighlightedSquare(((tile.Key.Item1, tile.Key.Item2), (tile.Value, tile.Value.GetComponent<MeshRenderer>().material)));
-                    tile.Value.GetComponent<MeshRenderer>().material = dungetonTileSelected;
-                } 
-            }
-
-            //assign the gameobject we just processed to the last game object flag
-            if (debugLogging) print($"assign last selected game object for {selectionManager.selectedCharacter.Item1.name}");
-            lastSelectedGameObject = selectionManager.selectedCharacter.Item1;            
+            }            
         }
         else
         {

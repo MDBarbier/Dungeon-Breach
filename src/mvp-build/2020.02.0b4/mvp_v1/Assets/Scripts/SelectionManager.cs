@@ -196,6 +196,9 @@ public class SelectionManager : MonoBehaviour
 
     internal void AddhighlightedSquare(((int, int), (GameObject, Material)) theHighlightedTile)
     {
-        this.highlightedTiles.Add(theHighlightedTile.Item1, theHighlightedTile.Item2);
+        if (!highlightedTiles.ContainsKey(theHighlightedTile.Item1))
+        {
+            this.highlightedTiles.Add(theHighlightedTile.Item1, theHighlightedTile.Item2); 
+        }
     }
 }

@@ -11,7 +11,7 @@ public class Pathfinder : MonoBehaviour
     private DungeonManager dungeonManager;
     private CharacterManager characterManager;
     private Dictionary<(int, int), GameObject> grid;
-    private GameObject[][] obstacles;
+    //private GameObject[][] obstacles;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
     [SerializeField] Material highlightedSquare;    
@@ -22,8 +22,7 @@ public class Pathfinder : MonoBehaviour
     {
         characterManager = FindObjectOfType<CharacterManager>();
         dungeonManager = FindObjectOfType<DungeonManager>();
-        grid = dungeonManager.GetDungeonGrid();
-        obstacles = dungeonManager.GetFurnitureArray();
+        grid = dungeonManager.GetDungeonGrid();   
     }
 
     // Update is called once per frame
@@ -191,6 +190,50 @@ public class Pathfinder : MonoBehaviour
         return path;
     }
 
+    internal Dictionary<Vector3, (Vector3?, int)> GetPlayerMoveArea(Vector3 startingPosition)
+    {
+        //frontier represents the squares at the edge of our exploration
+        var frontier = new Queue<Vector3>();
+
+        //the camefrom dictionary tracks where each and every square was moved to from
+        Dictionary<Vector3, (Vector3?, int)> cameFrom = new Dictionary<Vector3, (Vector3?, int)>();
+
+        //set the starting square to the current position of the transform
+        var startingSquare = startingPosition;
+
+        //add our starting square, with a null value
+        cameFrom.Add(startingSquare, (null, 0));
+
+        //add our starting square to the frontier
+        frontier.Enqueue(startingSquare);
+
+        //control loop that will keep executing as long as we don't run out of frontier (or we find our goal)
+        while (frontier.Count > 0)
+        {
+            //set the current square to the next in the frontier queue (this also removes it from the frontier queue)
+            var currentSq = frontier.Dequeue();
+
+            //loop through the current square's neighbours...
+            var neighbours = GetNeighbours(currentSq, false);
+            foreach (Vector3 next in neighbours)
+            {
+                //and if they aren't already in the cameFrom dictionary...
+                if (!cameFrom.ContainsKey(next))
+                {
+                    //add them to our frontier to be explored
+                    frontier.Enqueue(next);
+
+                    var reference = cameFrom.Where(a => a.Key == currentSq).FirstOrDefault();
+
+                    //and add them to the cameFrom to record our progress, linking our current square as the predecessor to this next square
+                    cameFrom.Add(next, (currentSq, reference.Value.Item2 + 1));
+                }
+            }
+        }
+
+        return cameFrom;
+    }
+
     private IEnumerable<Vector3> GetNeighbours(Vector3 origin, bool eightWay)
     {
         List<Vector3> list = new List<Vector3>();
@@ -213,9 +256,9 @@ public class Pathfinder : MonoBehaviour
 
         foreach (var possibility in list)
         {
-            if (GetFloorTileByLocation(possibility.x, possibility.z) != null)
+            if (dungeonManager.GetFloorTileByLocation(possibility.x, possibility.z) != null)
             {
-                if (!IsObstacleInSpace(possibility))
+                if (!dungeonManager.IsObstacleInSpace(possibility))
                 {
                     finalList.Add(possibility); 
                 }
@@ -223,32 +266,5 @@ public class Pathfinder : MonoBehaviour
         }
 
         return finalList;
-    }
-
-    //todo debug - pathfinding ignoring obstacles
-    private bool IsObstacleInSpace(Vector3 space)
-    {
-        try
-        {
-            if (obstacles[(int)space.x][(int)space.z] != null)
-            {
-                return true;
-            }
-            else { return false; }
-        }
-        catch (System.Exception)
-        {
-            return false;
-        }
-    }
-
-    private GameObject GetFloorTileByLocation(float x, float z)
-    {
-        if (grid == null || grid.Count == 0)
-        {
-            grid = dungeonManager.GetDungeonGrid();
-        }
-
-        return grid.Where(a => a.Key.Item1 == x && a.Key.Item2 == z).FirstOrDefault().Value;
-    }
+    }    
 }
