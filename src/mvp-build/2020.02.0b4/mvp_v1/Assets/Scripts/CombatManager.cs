@@ -12,6 +12,7 @@ public class CombatManager : MonoBehaviour
     private CharacterManager characterManager;
     private List<(Character ch, GameObject cgo, GameObject sq, Character attacker)> targetedCharacters;
     private CombatLogHandler combatLogHandler;
+    private SoundHandler soundHandler;
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +22,7 @@ public class CombatManager : MonoBehaviour
         dungeonManager = FindObjectOfType<DungeonManager>();
         characterManager = FindObjectOfType<CharacterManager>();
         combatLogHandler = FindObjectOfType<CombatLogHandler>();
+        soundHandler = FindObjectOfType<SoundHandler>();
     }
 
     // Update is called once per frame
@@ -43,11 +45,54 @@ public class CombatManager : MonoBehaviour
         {
             damageDealt = attacker.STR + diceRoller.RollDie(6);
             combatLogHandler.CombatLog($"{attacker.Name} attacks {target.Name} and the attack is hits for {damageDealt} damage!");
-            characterManager.ApplyDamage(target, damageDealt);
+            characterManager.ApplyDamage(target, damageDealt, out bool targetDied);
+
+            switch (target.Race)
+            {
+                case Assets.Scripts.Enums.Races.Human:
+                    if (targetDied) soundHandler.PlaySound(SoundNames.humanScream);
+                    break;
+                case Assets.Scripts.Enums.Races.Orc:
+                    if (targetDied) soundHandler.PlaySound(SoundNames.orcScream);
+                    break;
+                case Assets.Scripts.Enums.Races.Elf:
+                    break;
+                case Assets.Scripts.Enums.Races.Dwarf:
+                    break;
+                case Assets.Scripts.Enums.Races.Goblin:
+                    break;
+                case Assets.Scripts.Enums.Races.Halfling:
+                    break;
+                case Assets.Scripts.Enums.Races.Troll:
+                    break;
+                default:
+                    break;
+            }
         }
         else
         {
             combatLogHandler.CombatLog($"{attacker.Name} attacks {target.Name} and the attack misses!");
+        }
+
+        switch (attacker.Subclass)
+        {
+            case Assets.Scripts.Enums.Subclasses.None:
+                break;
+            case Assets.Scripts.Enums.Subclasses.Fighter:
+                soundHandler.PlaySound(SoundNames.sword);
+                break;
+            case Assets.Scripts.Enums.Subclasses.Archer:
+                soundHandler.PlaySound(SoundNames.arrow1);
+                break;
+            case Assets.Scripts.Enums.Subclasses.Bandit:
+                soundHandler.PlaySound(SoundNames.sword);
+                break;
+            case Assets.Scripts.Enums.Subclasses.Healer:
+                break;
+            case Assets.Scripts.Enums.Subclasses.Mage:
+                break;
+            default:
+                break;
         }
 
         return (attackHit, damageDealt);
@@ -69,8 +114,10 @@ public class CombatManager : MonoBehaviour
 
         combatLogHandler.CombatLog($"{healer.Name} tries to heal {target.Name} and heals {amountHealed} of hitpoints");
         {
-            characterManager.ApplyDamage(target, -amountHealed);
-        }        
+            characterManager.ApplyDamage(target, -amountHealed, out bool targetDied);
+        }
+
+        soundHandler.PlaySound(SoundNames.magic1);
 
         return (spellWorked, amountHealed);
     }

@@ -78,7 +78,7 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    internal void ApplyDamage(Character target, int damageDealt)
+    internal void ApplyDamage(Character target, int damageDealt, out bool targetDied)
     {
         if (target.PlayerControlled)
         {
@@ -102,15 +102,19 @@ public class CharacterManager : MonoBehaviour
                 Destroy(go);
                 turnManager.RemoveCharacterFromInitiative(target);
                 gamePersistenceEngine.AlterPlayerCharacterCount(-1);
+                targetDied = true;
+                
             }
             else if (match.Value.HP > match.Value.MAXHP)
             {
                 match.Value.HP = match.Value.MAXHP;
                 combatLogHandler.CombatLog($"{target.Name} is fully healed");
+                targetDied = false;
             }
             else
             {
                 combatLogHandler.CombatLog($"{target.Name} has {target.HP} hit points left");
+                targetDied = false;
             }
 
         }
@@ -134,7 +138,13 @@ public class CharacterManager : MonoBehaviour
                 enemyList.Remove(go);
                 Destroy(go);
                 turnManager.RemoveCharacterFromInitiative(target);
+                gamePersistenceEngine.AlterEnemyCharacterCount(-1);
+                targetDied = true;
             }
+            else
+            {
+                targetDied = false;
+            }            
 
         }
     }

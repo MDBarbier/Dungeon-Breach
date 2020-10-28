@@ -38,12 +38,12 @@ public class GamePersistenceEngine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (BattleState.PlayerCharacters == 0 && GameState == GameState.Underway)
+        if (BattleState.PlayerCharacters <= 0 && GameState == GameState.Underway)
         {
             GameState = GameState.FinishedLost;
         }
 
-        if (BattleState.EnemyCharacters == 0 && GameState == GameState.Underway)
+        if (BattleState.EnemyCharacters <= 0 && GameState == GameState.Underway)
         {
             GameState = GameState.FinishedWon;
         }
@@ -56,9 +56,10 @@ public class GamePersistenceEngine : MonoBehaviour
                 break;
             case GameState.FinishedWon:
             case GameState.FinishedLost:
+                GameState = GameState.Over;
                 if (SceneManager.GetActiveScene().buildIndex != 3)
                 {
-                    SceneManager.LoadScene(3);
+                    LoadSceneWithDelay(2f, 3);
                 }
                 break;
             default:
@@ -116,7 +117,24 @@ public class GamePersistenceEngine : MonoBehaviour
     }
     internal void AlterEnemyCharacterCount(int v)
     {
-        BattleState.PlayerCharacters += v;
+        BattleState.EnemyCharacters += v;
+    }
+
+    internal void LoadSceneWithDelay(float delay, int sceneBuildIndex)
+    {        
+        if (delay <= Mathf.Epsilon)
+        {
+            Invoke(nameof(LoadEndGameScene), 0.5f);
+        }
+        else
+        {
+            Invoke(nameof(LoadEndGameScene), delay);
+        }
+    }
+
+    private void LoadEndGameScene()
+    {
+        SceneManager.LoadScene(3);
     }
 }
 
@@ -136,7 +154,7 @@ public class BattleState
 
 public enum GameState
 {
-    Setup, Underway, FinishedWon, FinishedLost
+    Setup, Underway, FinishedWon, FinishedLost, Over
 }
 
 public static class FadeAudioSource
