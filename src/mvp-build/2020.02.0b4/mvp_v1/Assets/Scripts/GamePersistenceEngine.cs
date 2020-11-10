@@ -8,6 +8,7 @@ public class GamePersistenceEngine : MonoBehaviour
     public GameState GameState { get; set; } = GameState.Setup;    
     private BattleState _battleState;
     private AudioSource audioSource;
+    
 
     public BattleState BattleState { 
         get 
@@ -32,7 +33,7 @@ public class GamePersistenceEngine : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         audioSource.Play();
-        StartCoroutine(FadeAudioSource.StartFade(audioSource, 5.0f, 0.25f));
+        StartCoroutine(FadeAudioSource.StartFade(audioSource, 5.0f, 0.25f));        
     }
 
     // Update is called once per frame
@@ -109,7 +110,7 @@ public class GamePersistenceEngine : MonoBehaviour
     {
         GameState = GameState.Setup;
         SceneManager.LoadScene(0);
-    }
+    }    
 
     internal void AlterPlayerCharacterCount(int v)
     {
@@ -154,7 +155,7 @@ public class BattleState
 
 public enum GameState
 {
-    Setup, Underway, FinishedWon, FinishedLost, Over
+    Setup, Underway, FinishedWon, FinishedLost, Over, IngameMenu
 }
 
 public static class FadeAudioSource

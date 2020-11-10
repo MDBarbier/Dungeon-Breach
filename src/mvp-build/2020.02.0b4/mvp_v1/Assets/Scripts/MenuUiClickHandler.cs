@@ -16,10 +16,17 @@ public class MenuUiClickHandler : MonoBehaviour
     private int roomX;
     private int roomZ;
 
+#pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
+    [SerializeField] GameObject escapeMenu;
+    [SerializeField] GameObject escapeMenuPanel;
+    [SerializeField] GameObject helpMenuPanel;
+#pragma warning restore 649
+
+
     // Start is called before the first frame update
     void Start()
     {
-        gamePersistenceEngine = FindObjectOfType<GamePersistenceEngine>();    
+        gamePersistenceEngine = FindObjectOfType<GamePersistenceEngine>();
     }
 
     // Update is called once per frame
@@ -49,6 +56,29 @@ public class MenuUiClickHandler : MonoBehaviour
                 roomZ = (int)slider.value;
             }
         }
+    }
+
+    public void ResumeGame()
+    {
+        print("Resume game clicked");
+
+        gamePersistenceEngine.GameState = GameState.Underway;
+
+        escapeMenu.SetActive(false);
+        helpMenuPanel.SetActive(false);
+
+    }
+
+    public void BackToMenu()
+    {
+        escapeMenuPanel.SetActive(true);
+        helpMenuPanel.SetActive(false);
+    }
+
+    public void HelpMenu()
+    {
+        escapeMenuPanel.SetActive(false);
+        helpMenuPanel.SetActive(true);
     }
 
     public void UpdateMeleeNo()

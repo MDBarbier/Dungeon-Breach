@@ -7,6 +7,8 @@ public class ControlManager : MonoBehaviour
     private GameObject clickDetectedOn;
     internal GameObject hoverDetectedOn;
     private bool SpaceBarDetected;
+    private bool EscapeDetected;
+    private GamePersistenceEngine gamePersistenceEngine;
 
 #pragma warning disable 649 //disable the "Field x is never assigned to" warning which is a roslyn compaitibility issue 
     [SerializeField] bool debugLogging = false;
@@ -15,37 +17,47 @@ public class ControlManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gamePersistenceEngine = FindObjectOfType<GamePersistenceEngine>();
         mainCamera = Camera.main;
         SpaceBarDetected = false;
+        EscapeDetected = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        RaycastHit hit;
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-
-        if (Input.GetMouseButtonUp(0))
+        if (gamePersistenceEngine.GameState == GameState.Underway)
         {
-            if (Physics.Raycast(ray, out hit, 100f))
+            RaycastHit hit;
+            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+
+            if (Input.GetMouseButtonUp(0))
             {
-                if (hit.transform)
-                {                    
-                    clickDetectedOn = hit.transform.gameObject;
+                if (Physics.Raycast(ray, out hit, 100f))
+                {
+                    if (hit.transform)
+                    {
+                        clickDetectedOn = hit.transform.gameObject;
+                    }
+                }
+
+                if (clickDetectedOn != null && debugLogging)
+                {
+                    print($"click detected on {clickDetectedOn.name}");
                 }
             }
 
-            if (clickDetectedOn != null && debugLogging)
+            HandleHover(ray);
+
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                print($"click detected on {clickDetectedOn.name}");
-            }
+                SpaceBarDetected = true;
+            } 
         }
 
-        HandleHover(ray);
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            SpaceBarDetected = true;
+            EscapeDetected = EscapeDetected != true;
         }
     }
 
@@ -82,6 +94,12 @@ public class ControlManager : MonoBehaviour
     }
 
     internal bool GetSpacebarDetected() => SpaceBarDetected;
+    internal bool GetEscapeDetected() => EscapeDetected;
+
+    internal void ResetEscapeDetected()
+    {
+        EscapeDetected = false;
+    }
 
     internal GameObject GetClickDetectedOn() => clickDetectedOn;
 }
