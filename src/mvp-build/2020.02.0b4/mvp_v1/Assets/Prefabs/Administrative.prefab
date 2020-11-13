@@ -632,16 +632,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dungetonTile: {fileID: 5893945662550105341, guid: a4750ebc8d262f5449cd6b3201f9e9c3, type: 3}
-  dungeonTileColour1: {fileID: 2100000, guid: 5c9a9df4526fda8448dfb1ae227878ba, type: 2}
-  dungeonTileColour2: {fileID: 2100000, guid: 7fff30e2a3c68614aa7f26f98a583e74, type: 2}
+  dungeonTileColour1: {fileID: 2100000, guid: 57affabf9cc8f1443a25f2ff280d83a8, type: 2}
+  dungeonTileColour2: {fileID: 2100000, guid: e429c8ff9e485574b8aa09ee44b4da19, type: 2}
   characterPiece: {fileID: 2312313374800272004, guid: 30c099afd838b1647b7f4a2660e69a06, type: 3}
-  blueTeamCharacterColour: {fileID: 2100000, guid: 9c4f483b0284d154e8a37cf2184abca3, type: 2}
-  redTeamCharacterColour: {fileID: 2100000, guid: 54ca2b4f3596e5c4597f410987c7f42b, type: 2}
-  blueTeamCharacterColour2: {fileID: 2100000, guid: d7caf0c2f3819e1458bb143454a8b545, type: 2}
-  blueTeamCharacterColour3: {fileID: 2100000, guid: 186c986fd42bba54aa8b1e115ae62e00, type: 2}
-  redTeamCharacterColour2: {fileID: 2100000, guid: d297be8086930b045a546a487594ae77, type: 2}
+  blueTeamCharacterColour: {fileID: 2100000, guid: 13f617a7030a5904592f3220168f2363, type: 2}
+  redTeamCharacterColour: {fileID: 2100000, guid: d953cc3916a287a4bb860d1b165577c5, type: 2}
+  blueTeamCharacterColour2: {fileID: 2100000, guid: 6412fc3d848100c499da33874dbf7c38, type: 2}
+  blueTeamCharacterColour3: {fileID: 2100000, guid: 67d2236b34d423b46a514ea817833ab6, type: 2}
+  redTeamCharacterColour2: {fileID: 2100000, guid: 645955e5c3a3a1f4fb83978d2a63240f, type: 2}
   dungeonFurniture: {fileID: 5258238456208029294, guid: 245bf550a14be8e4fa68139d265123a2, type: 3}
-  dungeonFurnitureMaterial: {fileID: 2100000, guid: 047dd8ab87205af43b19fa61343c6aaa, type: 2}
+  dungeonFurnitureMaterial: {fileID: 2100000, guid: a46ddefb78a484643af07aed081bf055, type: 2}
   debugLogging: 0
   overridePersistence: 0
 --- !u!1 &6767811204179042607

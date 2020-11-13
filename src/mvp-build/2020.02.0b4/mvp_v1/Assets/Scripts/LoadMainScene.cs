@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 
 public static class LoadMainScene
-{   
+{
 
     [MenuItem("Tools/Load Main Menu Scene")]
     public static void LoadMainMenuScene()
