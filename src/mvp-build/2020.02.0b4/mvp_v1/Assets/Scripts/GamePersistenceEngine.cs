@@ -8,7 +8,7 @@ public class GamePersistenceEngine : MonoBehaviour
     public GameState GameState { get; set; } = GameState.Setup;    
     private BattleState _battleState;
     private AudioSource audioSource;
-    
+    private string _endGameMessage;
 
     public BattleState BattleState { 
         get 
@@ -36,6 +36,8 @@ public class GamePersistenceEngine : MonoBehaviour
         StartCoroutine(FadeAudioSource.StartFade(audioSource, 5.0f, 0.25f));        
     }
 
+    internal string GetEndGameMessage() => _endGameMessage;
+
     // Update is called once per frame
     void Update()
     {
@@ -57,7 +59,18 @@ public class GamePersistenceEngine : MonoBehaviour
                 break;
             case GameState.FinishedWon:
             case GameState.FinishedLost:
+                
+                if (GameState == GameState.FinishedLost)
+                {
+                    _endGameMessage = "Defeat stains your name!";
+                }
+                else
+                {
+                    _endGameMessage = "You emerged victorious!";
+                }
+
                 GameState = GameState.Over;
+
                 if (SceneManager.GetActiveScene().buildIndex != 3)
                 {
                     LoadSceneWithDelay(2f, 3);
