@@ -22,6 +22,7 @@ public class DungeonManager : MonoBehaviour
     private CombatLogHandler combatLogHandler;
     private System.Random random;
     private GamePersistenceEngine gamePersistenceEngine;
+    private Pathfinder pathfinder;
     private int numberOfPlayerMeleeCharacters;
     private int numberOfPlayerHealers;
     private int numberOfPlayerRangedCharacters;
@@ -115,6 +116,7 @@ public class DungeonManager : MonoBehaviour
         gridGenerator = FindObjectOfType<GridGenerator>();
         characterManager = FindObjectOfType<CharacterManager>();
         combatLogHandler = FindObjectOfType<CombatLogHandler>();
+        pathfinder = FindObjectOfType<Pathfinder>();
     }
 
     // Update is called once per frame
@@ -275,12 +277,28 @@ public class DungeonManager : MonoBehaviour
         for (int i = 0; i < xlength; i++)
         {
             //Check the spaces directly around the startPoint
-            var possibilities = CheckSurroundingSquares(startPoint, i);
+            //var possibilities = CheckSurroundingSquares(startPoint, i);
+            var possibilities2 = pathfinder.GetPlayerMoveArea(startPoint);
 
-            if (possibilities.Count > 0)
+            //if (possibilities.Count > 0)
+            //{
+            //    return new Vector3(possibilities.First().Item1, startPoint.y, possibilities.First().Item2);
+            //}
+
+            for (int j = 0; j < xlength; j++)
             {
-                return new Vector3(possibilities.First().Item1, startPoint.y, possibilities.First().Item2);
-            } 
+                foreach (var move in possibilities2)
+                {
+                    if (move.Value.Item2 > j ||
+                        characterManager.GetCharacterAtPosition((int)move.Key.x, (int)move.Key.z).Item1 != null)
+                    {
+                        continue;
+                    }
+
+                    var tile = GetFloorTileByLocation(move.Key.x, move.Key.z);
+                    return new Vector3(tile.transform.position.x, startPoint.y, tile.transform.position.z);
+                }
+            }            
         }
 
         throw new Exception("Unable to find a space to initialise!");
